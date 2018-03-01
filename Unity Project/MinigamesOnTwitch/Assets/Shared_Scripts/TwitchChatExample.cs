@@ -31,6 +31,7 @@ public class TwitchChatExample : MonoBehaviour
         //add new message.
         CreateUIMessage(user, msgString);
     }
+
     void CreateUIMessage(string userName, string msgString)
     {
         Color32 c = ColorFromUsername(userName);
@@ -47,6 +48,7 @@ public class TwitchChatExample : MonoBehaviour
         text.font = Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font;
         scrollRect.velocity = new Vector2(0, 1000f);
     }
+
     //when Submit button is clicked or ENTER is pressed.
     public void OnSubmit()
     {
@@ -57,11 +59,13 @@ public class TwitchChatExample : MonoBehaviour
             inputField.text = "";
         }
     }
+
     Color ColorFromUsername(string username)
     {
         Random.seed = username.Length + (int)username[0] + (int)username[username.Length - 1];
         return new Color(Random.Range(0.25f, 0.55f), Random.Range(0.20f, 0.55f), Random.Range(0.25f, 0.55f));
     }
+
     // Use this for initialization
     void Start()
     {

@@ -44,6 +44,7 @@ public class TwitchIRC : MonoBehaviour
         inProc = new System.Threading.Thread(() => IRCInputProcedure(input, networkStream));
         inProc.Start();
     }
+
     private void IRCInputProcedure(System.IO.TextReader input, System.Net.Sockets.NetworkStream networkStream)
     {
         while (!stopThreads)
@@ -75,6 +76,7 @@ public class TwitchIRC : MonoBehaviour
             }
         }
     }
+
     private void IRCOutputProcedure(System.IO.TextWriter output)
     {
         System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
@@ -110,6 +112,7 @@ public class TwitchIRC : MonoBehaviour
             commandQueue.Enqueue(cmd);
         }
     }
+
     public void SendMsg(string msg)
     {
         lock (commandQueue)
@@ -122,11 +125,13 @@ public class TwitchIRC : MonoBehaviour
     void Start()
     {
     }
+
     void OnEnable()
     {
         stopThreads = false;
         StartIRC();
     }
+
     void OnDisable()
     {
         stopThreads = true;
@@ -134,6 +139,7 @@ public class TwitchIRC : MonoBehaviour
         //print("inProc:" + inProc.IsAlive.ToString());
         //print("outProc:" + outProc.IsAlive.ToString());
     }
+
     void OnDestroy()
     {
         stopThreads = true;
@@ -141,6 +147,7 @@ public class TwitchIRC : MonoBehaviour
         //print("inProc:" + inProc.IsAlive.ToString());
         //print("outProc:" + outProc.IsAlive.ToString());
     }
+
     void Update()
     {
         lock (recievedMsgs)

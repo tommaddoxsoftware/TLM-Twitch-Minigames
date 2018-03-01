@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameJoin : MonoBehaviour {
     public int playerCount = 4;
     public int maxMessages = 100;
-    public bool requireJoin; 
+    public bool requireJoin = true; 
 
     private TwitchIRC m_IRC;
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
@@ -82,8 +82,8 @@ public class GameJoin : MonoBehaviour {
 
     public int CheckIfPlayer(string player)
     {
-        if (requireJoin == false)
-        {
+        //if (requireJoin == true)
+        //{
             for (int i = 0; i < m_players.Length; i++)
             {
                 if (player == m_players[i]) //Checks if the player is in the joined list
@@ -93,9 +93,9 @@ public class GameJoin : MonoBehaviour {
             }
 
             return -1; //Returns -1 if no player is in the joined list
-        }
+        //}
 
-        return 0;
+        //return 0;
     }
 
 
