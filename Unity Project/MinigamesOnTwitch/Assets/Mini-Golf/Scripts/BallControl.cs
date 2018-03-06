@@ -10,6 +10,8 @@ public class BallControl : MonoBehaviour {
 
     public GameObject ballPrefab;
 
+    public GameObject start;
+
     private TwitchIRC m_IRC;
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
     private int randomNum;
@@ -34,6 +36,7 @@ public class BallControl : MonoBehaviour {
         for (int i = 0; i < m_playerBalls.Length; i++)
         {
             m_playerBalls[i] = Instantiate(ballPrefab);
+            m_playerBalls[i].transform.position = start.transform.position;
 
             //Toggeles colling with each ball
             for (int j = 0; j < m_playerBalls.Length; j++)
