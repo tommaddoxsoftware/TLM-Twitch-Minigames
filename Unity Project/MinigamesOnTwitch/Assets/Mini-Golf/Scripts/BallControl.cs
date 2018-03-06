@@ -29,6 +29,22 @@ public class BallControl : MonoBehaviour {
         m_playerList = this.GetComponent<GameJoin>();
 
         m_playerBalls = new GameObject[m_playerList.MaxPlayers];
+
+        //Creates all balls
+        for (int i = 0; i < m_playerBalls.Length; i++)
+        {
+            m_playerBalls[i] = Instantiate(ballPrefab);
+
+            //Toggeles colling with each ball
+            for (int j = 0; j < m_playerBalls.Length; j++)
+            {
+                try
+                {
+                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); //Prevents balls from colleding when instantiating
+                }
+                catch { }
+            }
+        }
     }
 
 
@@ -52,9 +68,13 @@ public class BallControl : MonoBehaviour {
 
         m_playerList.Commands(msgArray, user); //Joining commands
 
-        if (m_playerList.CheckIfPlayer(user) != -1) //Checks if the player has joined
+        int player = m_playerList.CheckIfPlayer(user); //Gets the index of a player if they are in the game
+
+        if (player != -1) //Checks if the player has joined
         {
-            ball.Command(msgArray); //Runs ball commands
+            //ball.Command(msgArray); //Runs ball commands
+
+            m_playerBalls[player].GetComponent<Ball>().Command(msgArray); //Runs ball commands for the player
         }
     }
 }
