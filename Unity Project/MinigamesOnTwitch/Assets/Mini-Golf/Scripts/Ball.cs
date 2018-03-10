@@ -11,12 +11,18 @@ public class Ball : MonoBehaviour {
 
     private float m_power = 1;
 
+    //Used to control respawning
+    private bool m_outOfBounds = false;
+    private Vector3 m_lastPosition;
+
     private Rigidbody m_rigid;
+
 
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
-	}
+        
+     }
 	
 	// Update is called once per frame
 	void Update () {
@@ -29,6 +35,58 @@ public class Ball : MonoBehaviour {
         {
             StopBall();
         }
+
+    }
+
+    private void OnCollisionExit(Collision coll)
+    {
+        //Player is now out of bounds / has left one collider and hit another. 
+        //Start coroutine, if still out of bounds, respawn them
+        if(coll.gameObject.tag == "GolfCourse")
+        {
+            m_outOfBounds = true;
+            Debug.Log("Player left bounds!");
+            StartCoroutine("OutOfBoundsTimer");
+        }   
+    }
+    private void OnCollisionEnter(Collision coll)
+    {
+        //Ball is touching a playable area of the course - deemed in bounds.
+        if(coll.gameObject.tag == "GolfCourse")
+        {
+            m_outOfBounds = false;
+        }
+    }
+    private void OnCollisionStay(Collision other)
+    {
+        //Make sure the ball has remained in bounds.
+        if (other.gameObject.tag == "GolfCourse")
+        {
+            Debug.Log("In bounds");
+            m_outOfBounds = false;
+        }
+    }
+
+    IEnumerator OutOfBoundsTimer()
+    {
+        //Wait for 3 seconds - then perform an OutOfBounds check. This value should probably be set via an editor value
+        yield return new WaitForSeconds(3);
+        if(m_outOfBounds)
+        {            
+            Respawn(m_lastPosition);
+        }
+
+    }
+
+    private void Respawn(Vector3 respawnPoint)
+    {
+        //Just for understanding what position was used to respawn.
+        Debug.Log("Attempting to respawn. Current position: " + gameObject.transform.position + " New Position: " + respawnPoint);
+
+        //Remove any momentum whilst resetting position, then respawn at last known position, and reset the object state
+        m_rigid.isKinematic = true;
+        gameObject.transform.position = respawnPoint;
+        m_rigid.isKinematic = false;
     }
 
     private void StopBall()
@@ -42,8 +100,12 @@ public class Ball : MonoBehaviour {
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "hit")
         {
+            
             if (m_rigid.velocity == Vector3.zero)
             {
+                //Store the transform (so we can access the position) before we fire the ball
+                m_lastPosition = gameObject.transform.position;
+
                 this.transform.GetChild(0).gameObject.SetActive(false);
                 Vector3 dir = this.transform.position - aim.transform.position;//Gets the vector for the direction to an point infront of the ball
 
