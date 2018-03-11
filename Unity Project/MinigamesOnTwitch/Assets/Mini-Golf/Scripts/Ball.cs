@@ -7,7 +7,7 @@ public class Ball : MonoBehaviour {
     public GameObject power;
 
     private int m_lockPos = 0;
-    private int  m_angle;
+    private int m_angle;
 
     private float m_power = 1;
 
@@ -122,7 +122,7 @@ public class Ball : MonoBehaviour {
         //Sets the angle of the ball
         if (cmd[0].ToLower() == "angle")
         {
-            try
+            try //Trys to convert the command to a string
             {
                 int angVal = int.Parse(cmd[1]);
 
