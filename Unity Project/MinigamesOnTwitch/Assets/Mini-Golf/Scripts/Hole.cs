@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Hole : MonoBehaviour {
-    public BallControl controller;
+    public LevelController controller;
 
     // Use this for initialization
     void Start () {
-        //m_controller = t
-        //   this.GetComponent<BallControl>();
+
     }
 	
 	// Update is called once per frame

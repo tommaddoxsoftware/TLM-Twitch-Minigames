@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(GameJoin))]
 public class BallControl : MonoBehaviour
 {
     public int maxMessages = 100;
@@ -12,22 +13,17 @@ public class BallControl : MonoBehaviour
     public GameObject ballPrefab;
 
     public GameObject start;
-    public GameObject[] levels;
 
     private TwitchIRC m_IRC;
+    private LevelController m_levelControl;
+
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
-    private int level;
 
     private StringSplitter m_Splitter;
     private GameJoin m_playerList;
 
     private GameObject[] m_playerBalls;
-    private GameObject[,] m_objectives;
-
-    private bool[] m_playerState;
-
-    private int m_level;
-
+    
     // Use this for initialization
     void Start()
     {
@@ -39,7 +35,8 @@ public class BallControl : MonoBehaviour
 
         m_playerBalls = new GameObject[m_playerList.MaxPlayers];
 
-        m_playerState = new bool[m_playerList.MaxPlayers];
+        m_levelControl = this.GetComponent<LevelController>();
+        m_levelControl.Init(m_playerList.playerCount);
 
         for (int i = 0; i < m_playerList.MaxPlayers; i++)
         {
@@ -47,13 +44,6 @@ public class BallControl : MonoBehaviour
             CreateBalls(i);
         }
 
-        //Sets up levels
-        for (int i = 0; i < levels.Length; i++)
-        {
-
-        }
-
-        m_level = 1;
     }
 
     void OnChatMsgRecieved(string msg)
@@ -78,7 +68,7 @@ public class BallControl : MonoBehaviour
 
         int player = m_playerList.CheckIfPlayer(user); //Gets the index of a player if they are in the game
 
-        if (player != -1 && m_playerState[player] == false) //Checks if the player has joined and that their ball is in play
+        if (player != -1 && m_levelControl.PlayerState(player) == false) //Checks if the player has joined and that their ball is in play
         {
             //ball.Command(msgArray); //Runs ball commands
 
@@ -89,9 +79,7 @@ public class BallControl : MonoBehaviour
     private void CreateBalls(int i)
     {
         m_playerBalls[i] = Instantiate(ballPrefab);
-        m_playerBalls[i].transform.position = start.transform.position;
-
-        m_playerState[i] = false;
+        m_playerBalls[i].transform.position = m_levelControl.StartPos;
 
         //Toggeles colling with each ball
         for (int j = 0; j < m_playerBalls.Length; j++)
@@ -104,17 +92,31 @@ public class BallControl : MonoBehaviour
         }
     }
 
-    //Handles what happens when a ball is in the hole
-    public void BallHole(GameObject ball)
+    public int FindBallIndex(GameObject ball)
     {
         //Gets the location of the ball in the array
         for (int i = 0; i < m_playerBalls.Length; i++)
         {
-            if (ball == m_playerBalls[i]) //Finds the index of the ball
+            if (ball == m_playerBalls[i])
             {
-                m_playerState[i] = true; //Changes the balls state
-                m_playerBalls[i].SetActive(false); //Hides the ball
+                return i; //Rerturns the index of the ball
             }
+        }
+
+        return -1; //Returns -1 if gameobject is not a ball
+    }
+
+    public void HideBall(int ballIndex)
+    {
+        m_playerBalls[ballIndex].SetActive(false); //Hides the bal
+    }
+
+    public void MoveBalls()
+    {
+        for (int i = 0; i < m_playerBalls.Length; i++)
+        {
+            m_playerBalls[i].SetActive(true); //Shows the ball 
+            m_playerBalls[i].transform.position = m_levelControl.StartPos; //Move the ball to the new start location
         }
     }
 }
