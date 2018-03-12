@@ -117,6 +117,7 @@ public class BallControl : MonoBehaviour
         {
             m_playerBalls[i].SetActive(true); //Shows the ball 
             m_playerBalls[i].transform.position = m_levelControl.StartPos; //Move the ball to the new start location
+            m_playerBalls[i].GetComponent<Ball>().StopBall();
         }
     }
 }
