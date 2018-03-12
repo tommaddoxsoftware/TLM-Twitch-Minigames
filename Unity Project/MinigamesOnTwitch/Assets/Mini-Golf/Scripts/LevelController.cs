@@ -24,7 +24,7 @@ public class LevelController : MonoBehaviour
     {
         m_ballControl = this.GetComponent<BallControl>(); //Finds the ball controller
 
-        m_level = 1; //Starts the level at level 1
+        m_level = 0; //Starts the level at level 1
 
         m_objectives = new GameObject[levels.Length, 2]; //Sets up the array for the start and finish  
                                                             //[level,0] start | [level,1] end
