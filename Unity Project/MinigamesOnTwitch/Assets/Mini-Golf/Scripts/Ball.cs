@@ -45,7 +45,7 @@ public class Ball : MonoBehaviour {
         if(coll.gameObject.tag == "GolfCourse")
         {
             m_outOfBounds = true;
-            Debug.Log("Player left bounds!");
+            //Debug.Log("Player left bounds!");
             StartCoroutine("OutOfBoundsTimer");
         }   
     }
@@ -62,7 +62,7 @@ public class Ball : MonoBehaviour {
         //Make sure the ball has remained in bounds.
         if (other.gameObject.tag == "GolfCourse")
         {
-            Debug.Log("In bounds");
+            //Debug.Log("In bounds");
             m_outOfBounds = false;
         }
     }
@@ -89,7 +89,7 @@ public class Ball : MonoBehaviour {
         m_rigid.isKinematic = false;
     }
 
-    private void StopBall()
+    public void StopBall()
     {
         this.transform.GetChild(0).gameObject.SetActive(true);
         m_rigid.isKinematic = true;
@@ -162,13 +162,25 @@ public class Ball : MonoBehaviour {
             {
                 float pwVal = float.Parse(cmd[1]);
 
-                if (pwVal >= 1 && pwVal <= 1000000) //Checks if the angle is valid
+                if (pwVal >= 1 && pwVal <= 10) //Checks if the angle is valid
                 {
-                    m_power = pwVal;
-
-                    power.transform.localScale = new Vector3(0.2f, 0.06f, pwVal);
-                    power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - pwVal) / 2);
+                    m_power = pwVal;                    
                 }
+                if(pwVal > 10)
+                {
+                    //Do something here, possibly send admin message to twitch chat
+                    //For now, set to 10
+                    m_power = 10;
+                    
+                }
+                if (pwVal < 1)
+                {
+                    m_power = 1;                    
+                }
+
+                //Scale shit appropriately
+                power.transform.localScale = new Vector3(0.2f, 0.06f, m_power);
+                power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - m_power) / 2);
             }
             catch { }
         }
