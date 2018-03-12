@@ -12,6 +12,7 @@ public class GetCameraTarget : MonoBehaviour, IGetTarget {
 
     private void Awake()
     {
+        multiTarget_Cam = FindObjectOfType<MultiTargetCamera>();
         AddThis();
     }
 
