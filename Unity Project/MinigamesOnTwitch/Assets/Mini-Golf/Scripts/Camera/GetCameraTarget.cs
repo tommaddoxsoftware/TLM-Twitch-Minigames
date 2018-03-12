@@ -15,7 +15,10 @@ public class GetCameraTarget : MonoBehaviour, IGetTarget {
         multiTarget_Cam = FindObjectOfType<MultiTargetCamera>();
         AddThis();
     }
-
+    private void OnEnable()
+    {
+        AddThis();
+    }
     private void OnDisable()
     {
         RemoveThis();

@@ -37,7 +37,7 @@ public class MultiTargetCamera : MonoBehaviour, ISetTargets {
 
     private void LateUpdate()
     {
-        Debug.Log(targetObjects.Count);
+        //Debug.Log(targetObjects.Count);
 
         if(targetObjects.Count == 0)
         {
