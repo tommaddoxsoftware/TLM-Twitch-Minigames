@@ -95,6 +95,22 @@ public class Ball : MonoBehaviour {
         m_rigid.isKinematic = true;
         m_rigid.isKinematic = false;
     }
+
+    //Resets the balls angle and power to 0
+    public void ResetBallAdjustments()
+    {
+        m_angle = 0;
+        m_power = 1;
+        ScalePower();
+    }
+
+    private void ScalePower()
+    {
+        //Scale shit appropriately
+        power.transform.localScale = new Vector3(0.2f, 0.06f, m_power);
+        power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - m_power) / 2);
+    }
+
     public void Command(string[] cmd)
     {
         //Propells the ball in the direction
@@ -178,9 +194,7 @@ public class Ball : MonoBehaviour {
                     m_power = 1;                    
                 }
 
-                //Scale shit appropriately
-                power.transform.localScale = new Vector3(0.2f, 0.06f, m_power);
-                power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - m_power) / 2);
+                ScalePower();
             }
             catch { }
         }
