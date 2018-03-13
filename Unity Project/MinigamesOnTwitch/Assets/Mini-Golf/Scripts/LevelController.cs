@@ -17,8 +17,6 @@ public class LevelController : MonoBehaviour
 
     private int m_level;
 
-    private bool[] playerState;
-
     // Use this for initialization
     void Start()
     {
@@ -46,14 +44,13 @@ public class LevelController : MonoBehaviour
         ResetBallState();
     }
 
-    
-
     public bool CheckAllFinished()
     {
-        //Checks that all players have gotten to the hole
-        for (int i = 0; i < m_playerState.Length; i++)
+        List<int> playingPlayers = this.GetComponent<GameJoin>().GetActivePlayers(); //Gets the active players indexes
+
+        for (int i = 0; i < playingPlayers.Count; i++)
         {
-            if (m_playerState[i] == false)
+            if (!m_playerState[playingPlayers[i]]) //Checks if that player has finnished
             {
                 return false;
             }
@@ -61,7 +58,6 @@ public class LevelController : MonoBehaviour
 
         return true;
     }
-
 
     //Handles what happens when a ball is in the hole
     public void BallHole(GameObject ball)
