@@ -87,6 +87,9 @@ public class BallControl : MonoBehaviour
             //ball.Command(msgArray); //Runs ball commands
 
             m_playerBalls[player].GetComponent<Ball>().Command(msgArray); //Runs ball commands for the player
+
+            //Set Ball UI
+            GameObject.Find("UiManager").GetComponent<UiController>().UISetPlayerName(m_playerBalls[player], user);
         }
     }
 
@@ -131,6 +134,8 @@ public class BallControl : MonoBehaviour
         CreateBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         ResetBall(index);
+
+        
     }
 
     public void PlayerLeft(int index)
