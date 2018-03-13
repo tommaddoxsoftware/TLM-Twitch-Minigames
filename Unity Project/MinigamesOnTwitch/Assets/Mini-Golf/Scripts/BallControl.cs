@@ -119,16 +119,23 @@ public class BallControl : MonoBehaviour
         m_playerBalls[ballIndex].SetActive(false); //Hides the bal
     }
 
+    private void ResetBall(int index)
+    {
+        m_playerBalls[index].GetComponent<Ball>().ResetBallAdjustments();
+    }
+
     public void PlayerJoined(int index)
     {
         CreateBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
+        ResetBall(index);
     }
 
     public void PlayerLeft(int index)
     {
         RemoveBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
+        ResetBall(index);
     }
 
     public void MoveBalls()
