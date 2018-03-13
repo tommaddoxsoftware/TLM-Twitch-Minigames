@@ -121,7 +121,20 @@ public class GameJoin : MonoBehaviour {
         catch { }
     }
 
+    public List<int> GetActivePlayers()
+    {
+        List<int> activePlayers = new List<int>();
 
+        for (int i = 0; i < m_players.Length; i++)
+        {
+            if (m_players[i] != null)
+            {
+                activePlayers.Add(i);
+            }
+        }
+
+        return activePlayers;
+    }
 
     public int MaxPlayers {
         get { return m_players.Length; }      
