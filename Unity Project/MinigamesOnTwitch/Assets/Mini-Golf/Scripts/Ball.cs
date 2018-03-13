@@ -17,11 +17,14 @@ public class Ball : MonoBehaviour {
 
     private Rigidbody m_rigid;
 
+    
+    private int oobTimeout;
+
 
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
-        
+        oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
      }
 	
 	// Update is called once per frame
@@ -70,7 +73,7 @@ public class Ball : MonoBehaviour {
     IEnumerator OutOfBoundsTimer()
     {
         //Wait for 3 seconds - then perform an OutOfBounds check. This value should probably be set via an editor value
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(oobTimeout);
         if(m_outOfBounds)
         {            
             Respawn(m_lastPosition);

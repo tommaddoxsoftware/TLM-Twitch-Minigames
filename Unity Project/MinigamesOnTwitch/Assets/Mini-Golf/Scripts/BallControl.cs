@@ -18,6 +18,8 @@ public class BallControl : MonoBehaviour {
     private GameJoin m_playerList;
 
     private GameObject[] m_playerBalls;
+    
+    public int outOfBoundsTimeout = 3;
 
 
     // Use this for initialization
