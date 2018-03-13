@@ -38,12 +38,24 @@ public class BallControl : MonoBehaviour
         m_levelControl = this.GetComponent<LevelController>();
         m_levelControl.Init(m_playerList.playerCount);
 
+        
         for (int i = 0; i < m_playerList.MaxPlayers; i++)
         {
             //Creates and set ups all balls
-            CreateBalls(i);
-        }
+            //eateBall(i);
+            m_playerBalls[i] = Instantiate(ballPrefab);
+            m_playerBalls[i].SetActive(false);
 
+            for (int j = 0; j < m_playerBalls.Length; j++)
+            {
+                try
+                {
+                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); //Prevents balls from colleding when instantiating
+                }
+                catch { }
+            }
+        }
+        
     }
 
     void OnChatMsgRecieved(string msg)
@@ -76,20 +88,16 @@ public class BallControl : MonoBehaviour
         }
     }
 
-    private void CreateBalls(int i)
-    {
-        m_playerBalls[i] = Instantiate(ballPrefab);
-        m_playerBalls[i].transform.position = m_levelControl.StartPos;
 
-        //Toggeles colling with each ball
-        for (int j = 0; j < m_playerBalls.Length; j++)
-        {
-            try
-            {
-                Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); //Prevents balls from colleding when instantiating
-            }
-            catch { }
-        }
+    private void CreateBall(int index)
+    {
+        m_playerBalls[index].transform.position = m_levelControl.StartPos;
+        m_playerBalls[index].SetActive(true);
+    }
+
+    private void RemoveBall(int index)
+    {
+        m_playerBalls[index].SetActive(false);
     }
 
     public int FindBallIndex(GameObject ball)
@@ -109,6 +117,18 @@ public class BallControl : MonoBehaviour
     public void HideBall(int ballIndex)
     {
         m_playerBalls[ballIndex].SetActive(false); //Hides the bal
+    }
+
+    public void PlayerJoined(int index)
+    {
+        CreateBall(index);
+        m_playerBalls[index].GetComponent<Ball>().StopBall();
+    }
+
+    public void PlayerLeft(int index)
+    {
+        RemoveBall(index);
+        m_playerBalls[index].GetComponent<Ball>().StopBall();
     }
 
     public void MoveBalls()
