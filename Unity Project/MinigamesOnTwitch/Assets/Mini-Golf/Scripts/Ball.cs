@@ -11,6 +11,9 @@ public class Ball : MonoBehaviour {
 
     private float m_power = 1;
 
+    public string usrName;
+    public Color playerColour;
+
     //Used to control respawning
     private bool m_outOfBounds = false;
     private Vector3 m_lastPosition;
@@ -21,7 +24,14 @@ public class Ball : MonoBehaviour {
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
-        
+
+        //Generate a colour for the player
+        playerColour = GameObject.Find("UiManager").GetComponent<UiController>().ColorFromUsername(usrName);
+
+        //Once we have a colour, add them to the scoreboard UI, and set the ball UI (Their username)
+        GameObject uiManager = GameObject.Find("UiManager");
+        uiManager.GetComponent<UiController>().AddToScoreboard(usrName, playerColour);
+        uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
      }
 	
 	// Update is called once per frame
