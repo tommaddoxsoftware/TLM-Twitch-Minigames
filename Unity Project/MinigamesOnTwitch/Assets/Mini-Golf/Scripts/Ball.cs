@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ball : MonoBehaviour {
     public GameObject aim;
     public GameObject power;
+
+    public GameObject scoreBoardStrokeUi;
+    public GameObject scoreboardNameUi;
+    public int playerId;
 
     private int m_lockPos = 0;
     private int m_angle;
@@ -13,6 +18,7 @@ public class Ball : MonoBehaviour {
 
     public string usrName;
     public Color playerColour;
+    private int strokeCount = 0;
 
     //Used to control respawning
     private bool m_outOfBounds = false;
@@ -30,7 +36,7 @@ public class Ball : MonoBehaviour {
 
         //Once we have a colour, add them to the scoreboard UI, and set the ball UI (Their username)
         GameObject uiManager = GameObject.Find("UiManager");
-        uiManager.GetComponent<UiController>().AddToScoreboard(usrName, playerColour);
+        uiManager.GetComponent<UiController>().AddToScoreboard(usrName, this.gameObject);
         uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
      }
 	
@@ -136,6 +142,16 @@ public class Ball : MonoBehaviour {
                 Vector3 dir = this.transform.position - aim.transform.position;//Gets the vector for the direction to an point infront of the ball
 
                 m_rigid.velocity = -dir * m_power; //Applys the velocity to the ball
+
+                //Update scores
+                strokeCount++;
+                GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
+
+                /*******************/
+                /*     To Do:     */
+                /*****************/
+                //Store each player's score per course
+                //Only display score per course
             }
         }
 

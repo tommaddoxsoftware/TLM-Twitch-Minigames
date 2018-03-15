@@ -140,6 +140,7 @@ public class BallControl : MonoBehaviour
     {
         RemoveBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
+        GameObject.Find("UiManager").GetComponent<UiController>().RemoveFromScoreboard(m_playerBalls[index]);
         ResetBall(index);
     }
 
