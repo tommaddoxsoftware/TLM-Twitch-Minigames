@@ -7,7 +7,6 @@ public class UiLookAtCamera : MonoBehaviour {
     
     private Camera gameCam;
     private Quaternion origRot;
-    private Vector3 origPos;
 
 	// Use this for initialization
 	void Start () {
@@ -15,7 +14,6 @@ public class UiLookAtCamera : MonoBehaviour {
         gameCam = Camera.main;
 
         origRot = transform.rotation;
-        origPos = transform.position;
 	}
 	
 	// Update is called once per frame
