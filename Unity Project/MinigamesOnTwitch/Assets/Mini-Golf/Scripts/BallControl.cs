@@ -86,8 +86,8 @@ public class BallControl : MonoBehaviour
 
             m_playerBalls[player].GetComponent<Ball>().Command(msgArray); //Runs ball commands for the player
 
-            //Set Ball UI
-            GameObject.Find("UiManager").GetComponent<UiController>().UISetPlayerName(m_playerBalls[player], user);
+            //Assign Player name
+            m_playerBalls[player].GetComponent<Ball>().usrName = user;
         }
     }
 
