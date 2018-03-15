@@ -7,16 +7,25 @@ public class Ball : MonoBehaviour {
     public GameObject power;
 
     private int m_lockPos = 0;
-    private int  m_angle;
+    private int m_angle;
 
     private float m_power = 1;
 
+    //Used to control respawning
+    private bool m_outOfBounds = false;
+    private Vector3 m_lastPosition;
+
     private Rigidbody m_rigid;
+
+    
+    private int oobTimeout;
+
 
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
-	}
+        oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
+     }
 	
 	// Update is called once per frame
 	void Update () {
@@ -29,21 +38,93 @@ public class Ball : MonoBehaviour {
         {
             StopBall();
         }
+
     }
 
-    private void StopBall()
+    private void OnCollisionExit(Collision coll)
+    {
+        //Player is now out of bounds / has left one collider and hit another. 
+        //Start coroutine, if still out of bounds, respawn them
+        if(coll.gameObject.tag == "GolfCourse")
+        {
+            m_outOfBounds = true;
+            //Debug.Log("Player left bounds!");
+            StartCoroutine("OutOfBoundsTimer");
+        }   
+    }
+    private void OnCollisionEnter(Collision coll)
+    {
+        //Ball is touching a playable area of the course - deemed in bounds.
+        if(coll.gameObject.tag == "GolfCourse")
+        {
+            m_outOfBounds = false;
+        }
+    }
+    private void OnCollisionStay(Collision other)
+    {
+        //Make sure the ball has remained in bounds.
+        if (other.gameObject.tag == "GolfCourse")
+        {
+            //Debug.Log("In bounds");
+            m_outOfBounds = false;
+        }
+    }
+
+    IEnumerator OutOfBoundsTimer()
+    {
+        //Wait for 3 seconds - then perform an OutOfBounds check. This value should probably be set via an editor value
+        yield return new WaitForSeconds(oobTimeout);
+        if(m_outOfBounds)
+        {            
+            Respawn(m_lastPosition);
+        }
+
+    }
+
+    private void Respawn(Vector3 respawnPoint)
+    {
+        //Just for understanding what position was used to respawn.
+        Debug.Log("Attempting to respawn. Current position: " + gameObject.transform.position + " New Position: " + respawnPoint);
+
+        //Remove any momentum whilst resetting position, then respawn at last known position, and reset the object state
+        m_rigid.isKinematic = true;
+        gameObject.transform.position = respawnPoint;
+        m_rigid.isKinematic = false;
+    }
+
+    public void StopBall()
     {
         this.transform.GetChild(0).gameObject.SetActive(true);
         m_rigid.isKinematic = true;
         m_rigid.isKinematic = false;
     }
+
+    //Resets the balls angle and power to 0
+    public void ResetBallAdjustments()
+    {
+        m_angle = 0;
+        m_power = 1;
+        ScalePower();
+    }
+
+    private void ScalePower()
+    {
+        //Scale shit appropriately
+        power.transform.localScale = new Vector3(0.2f, 0.06f, m_power);
+        power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - m_power) / 2);
+    }
+
     public void Command(string[] cmd)
     {
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "hit")
         {
+            
             if (m_rigid.velocity == Vector3.zero)
             {
+                //Store the transform (so we can access the position) before we fire the ball
+                m_lastPosition = gameObject.transform.position;
+
                 this.transform.GetChild(0).gameObject.SetActive(false);
                 Vector3 dir = this.transform.position - aim.transform.position;//Gets the vector for the direction to an point infront of the ball
 
@@ -60,7 +141,7 @@ public class Ball : MonoBehaviour {
         //Sets the angle of the ball
         if (cmd[0].ToLower() == "angle")
         {
-            try
+            try //Trys to convert the command to a string
             {
                 int angVal = int.Parse(cmd[1]);
 
@@ -100,13 +181,23 @@ public class Ball : MonoBehaviour {
             {
                 float pwVal = float.Parse(cmd[1]);
 
-                if (pwVal >= 1 && pwVal <= 1000000) //Checks if the angle is valid
+                if (pwVal >= 1 && pwVal <= 10) //Checks if the angle is valid
                 {
-                    m_power = pwVal;
-
-                    power.transform.localScale = new Vector3(0.2f, 0.06f, pwVal);
-                    power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - pwVal) / 2);
+                    m_power = pwVal;                    
                 }
+                if(pwVal > 10)
+                {
+                    //Do something here, possibly send admin message to twitch chat
+                    //For now, set to 10
+                    m_power = 10;
+                    
+                }
+                if (pwVal < 1)
+                {
+                    m_power = 1;                    
+                }
+
+                ScalePower();
             }
             catch { }
         }

@@ -42,7 +42,7 @@ public class GameJoin : MonoBehaviour {
             }
         }
 
-
+            
         if (msg[0].ToLower() == "!leave")
         {
             int index = CheckIfPlayer(user);
@@ -59,12 +59,14 @@ public class GameJoin : MonoBehaviour {
     {
         Debug.Log("Adding Player: " + player);
         m_players[index] = player;
+        SendJoin(index);
     }
 
     public void RemovePlayer(int index)
     {
         Debug.Log("Removing Player: " + m_players[index]);
         m_players[index] = null;
+        SendLeft(index);
     }
 
     private int CheckIfSpace()
@@ -98,6 +100,41 @@ public class GameJoin : MonoBehaviour {
         //return 0;
     }
 
+    //Send join message to game controllers
+    private void SendJoin(int index)
+    {
+        //Sends messages to minigame controllers to say that a player has joined
+        try
+        {
+            this.GetComponent<BallControl>().PlayerJoined(index); //MiniGolf
+        }
+        catch { }
+    }
+
+    private void SendLeft(int index)
+    {
+        //Sends messages to minigame controllers to say that a player has left
+        try
+        {
+            this.GetComponent<BallControl>().PlayerLeft(index); //MiniGolf
+        }
+        catch { }
+    }
+
+    public List<int> GetActivePlayers()
+    {
+        List<int> activePlayers = new List<int>();
+
+        for (int i = 0; i < m_players.Length; i++)
+        {
+            if (m_players[i] != null)
+            {
+                activePlayers.Add(i);
+            }
+        }
+
+        return activePlayers;
+    }
 
     public int MaxPlayers {
         get { return m_players.Length; }      
