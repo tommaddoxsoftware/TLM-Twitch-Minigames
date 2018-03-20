@@ -6,6 +6,9 @@ public class Ball : MonoBehaviour {
     public GameObject aim;
     public GameObject power;
 
+    public int maxPower = 50;
+    public int minPower = 1;
+
     private int m_lockPos = 0;
     private int m_angle;
 
@@ -34,7 +37,7 @@ public class Ball : MonoBehaviour {
         Debug.Log("Speed: " + m_rigid.velocity.magnitude);
        Debug.Log("Velocity: " + m_rigid.velocity);
        */
-       if(m_rigid.velocity.magnitude < 0.07f)
+       if(m_rigid.velocity.magnitude < 0.3f)
         {
             StopBall();
         }
@@ -181,20 +184,18 @@ public class Ball : MonoBehaviour {
             {
                 float pwVal = float.Parse(cmd[1]);
 
-                if (pwVal >= 1 && pwVal <= 10) //Checks if the angle is valid
+                if (pwVal >= minPower && pwVal <= maxPower) //Checks if the angle is valid
                 {
                     m_power = pwVal;                    
                 }
-                if(pwVal > 10)
+                if(pwVal > maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
-                    //For now, set to 10
-                    m_power = 10;
-                    
+                    m_power = maxPower; 
                 }
-                if (pwVal < 1)
+                if (pwVal < minPower)
                 {
-                    m_power = 1;                    
+                    m_power = minPower;                    
                 }
 
                 ScalePower();
