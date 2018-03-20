@@ -23,7 +23,7 @@ public class UiLookAtCamera : MonoBehaviour {
      //    transform.rotation = origRot;
         transform.rotation = origRot * Quaternion.Euler(0, gameCam.transform.rotation.eulerAngles.y,0);
 
-        Debug.Log("Rotation of Camera: " + gameCam.transform.rotation.eulerAngles);
+        //Debug.Log("Rotation of Camera: " + gameCam.transform.rotation.eulerAngles);
         
 	}
 }
