@@ -1,8 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ball : MonoBehaviour {
+    public Text velTxt;
+    public Text magTxt;
+    public Text magLossTxt;
+
     public GameObject aim;
     public GameObject power;
 
@@ -23,17 +28,18 @@ public class Ball : MonoBehaviour {
     
     private int oobTimeout;
 
+    private float magLosStore = 0;
 
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
         oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
-     }
+    }
 	
 	// Update is called once per frame
 	void Update () {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
-/*
+        /*
         Debug.Log("Speed: " + m_rigid.velocity.magnitude);
        Debug.Log("Velocity: " + m_rigid.velocity);
        */
@@ -42,6 +48,16 @@ public class Ball : MonoBehaviour {
             StopBall();
         }
 
+       /*
+        velTxt.text = "Vel: " + this.GetComponent<Rigidbody>().velocity;
+        magTxt.text = "Mag: " + this.GetComponent<Rigidbody>().velocity.magnitude;
+
+        float magLoss = magLosStore - this.GetComponent<Rigidbody>().velocity.magnitude;
+
+        magLossTxt.text = "MLoss: " + magLoss;
+
+        magLosStore = this.GetComponent<Rigidbody>().velocity.magnitude;
+        */
     }
 
     private void OnCollisionExit(Collision coll)
