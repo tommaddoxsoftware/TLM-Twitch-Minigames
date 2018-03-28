@@ -25,7 +25,8 @@ public class Ball : MonoBehaviour {
 
     private Rigidbody m_rigid;
 
-    
+    private bool m_inMotion = false;
+
     private int oobTimeout;
 
     private float magLosStore = 0;
@@ -48,7 +49,7 @@ public class Ball : MonoBehaviour {
             StopBall();
         }
 
-       /*
+       
         velTxt.text = "Vel: " + this.GetComponent<Rigidbody>().velocity;
         magTxt.text = "Mag: " + this.GetComponent<Rigidbody>().velocity.magnitude;
 
@@ -57,7 +58,11 @@ public class Ball : MonoBehaviour {
         magLossTxt.text = "MLoss: " + magLoss;
 
         magLosStore = this.GetComponent<Rigidbody>().velocity.magnitude;
-        */
+
+        if (m_inMotion && magLoss < 0.01)
+        {
+            StopBall();
+        }
     }
 
     private void OnCollisionExit(Collision coll)
@@ -111,11 +116,17 @@ public class Ball : MonoBehaviour {
         m_rigid.isKinematic = false;
     }
 
+    private void SetMovement()
+    {
+        m_inMotion = true;
+    }
+
     public void StopBall()
     {
         this.transform.GetChild(0).gameObject.SetActive(true);
         m_rigid.isKinematic = true;
         m_rigid.isKinematic = false;
+        m_inMotion = false;
     }
 
     //Resets the balls angle and power to 0
@@ -148,6 +159,8 @@ public class Ball : MonoBehaviour {
                 Vector3 dir = this.transform.position - aim.transform.position;//Gets the vector for the direction to an point infront of the ball
 
                 m_rigid.velocity = -dir * m_power; //Applys the velocity to the ball
+
+                Invoke("SetMovement", 3);
             }
         }
 
