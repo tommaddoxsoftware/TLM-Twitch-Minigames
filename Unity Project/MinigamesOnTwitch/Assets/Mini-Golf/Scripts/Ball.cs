@@ -139,7 +139,7 @@ public class Ball : MonoBehaviour {
 
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "!angle")
+        if (cmd[0].ToLower() == "!angle" || cmd[0].ToLower() == "!an")
         {
             try //Trys to convert the command to a string
             {
@@ -153,7 +153,7 @@ public class Ball : MonoBehaviour {
             catch { }
         }
 
-        if (cmd[0].ToLower() == "!adjust")
+        if (cmd[0].ToLower() == "!adjust" || cmd[0].ToLower() == "!ad")
         {
             try
             {
@@ -175,7 +175,7 @@ public class Ball : MonoBehaviour {
         }
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "!power")
+        if (cmd[0].ToLower() == "!power" || cmd[0].ToLower() == "!pwr")
         {
             try
             {
