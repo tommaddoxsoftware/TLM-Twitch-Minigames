@@ -117,7 +117,7 @@ public class Ball : MonoBehaviour {
     public void Command(string[] cmd)
     {
         //Propells the ball in the direction
-        if (cmd[0].ToLower() == "hit")
+        if (cmd[0].ToLower() == "!hit")
         {
             
             if (m_rigid.velocity == Vector3.zero)
@@ -132,14 +132,14 @@ public class Ball : MonoBehaviour {
             }
         }
 
-        if (cmd[0].ToLower() == "stop")
+        if (cmd[0].ToLower() == "!stop")
         {
             StopBall();
         }
 
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "angle")
+        if (cmd[0].ToLower() == "!angle")
         {
             try //Trys to convert the command to a string
             {
@@ -153,7 +153,7 @@ public class Ball : MonoBehaviour {
             catch { }
         }
 
-        if (cmd[0].ToLower() == "adjust")
+        if (cmd[0].ToLower() == "!adjust")
         {
             try
             {
@@ -175,7 +175,7 @@ public class Ball : MonoBehaviour {
         }
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "power")
+        if (cmd[0].ToLower() == "!power")
         {
             try
             {
