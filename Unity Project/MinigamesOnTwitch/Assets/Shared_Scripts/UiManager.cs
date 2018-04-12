@@ -14,6 +14,11 @@ public class UiManager : MonoBehaviour {
         //Set listener for input fields. Delegate the function to SetUsername and SetOAuth
         usernameInput.onEndEdit.AddListener(delegate { SetUsername(usernameInput); });
         oauthInput.onEndEdit.AddListener(delegate { SetOAuth(oauthInput); });
+
+        if (PlayerPrefs.HasKey("TwitchUsr"))
+            usernameInput.text = PlayerPrefs.GetString("TwitchUsr");
+        if (PlayerPrefs.HasKey("TwitchAuth"))
+            oauthInput.text = PlayerPrefs.GetString("TwitchAuth");
     }
     
     public void GetTwitchAuth()
