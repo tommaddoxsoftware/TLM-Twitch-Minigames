@@ -2,25 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UiController : MonoBehaviour {
 
     private int numPlayers = 0;
 
-    private Text uiText;
+    private TextMeshProUGUI uiText;
     [SerializeField]
     private GameObject usrNamePrefab;
     [SerializeField]
     private GameObject usrScorePrefab;
+    [SerializeField]
+    private GameObject usrWelcomePrefab;
 
 	public void UISetPlayerName(GameObject playerObj, string usrName)
     {
         //Get the text object attached to ball UI
-        uiText = playerObj.GetComponentInChildren<Text>();
+        uiText = playerObj.GetComponentInChildren<TextMeshProUGUI>();
 
         //Set their name, and set colour to player's assigned colour
         uiText.text = usrName;
         uiText.color = playerObj.GetComponent<Ball>().playerColour;
+
+        //Welcome Player Message
+
+        float delay = 4f;
+
+        // Spawn new game object of player join game message for the GUI
+        GameObject usrWelcomeMsg = Instantiate(usrWelcomePrefab, GameObject.Find("WelcomePlayer").transform);
+
+        //Get the text component for the message
+        TextMeshProUGUI message = usrWelcomeMsg.GetComponent<TextMeshProUGUI>();
+
+        // Set the join message
+        message.text = (usrName + " has joined the game!");
+
+        // Set Position of message
+        message.transform.position = message.transform.position - new Vector3(0, 50, 0);
+
+        // Destroy the game object after the value of delay
+        Destroy(usrWelcomeMsg, delay);
     }
 
     public Color ColorFromUsername(string username)
@@ -42,8 +64,8 @@ public class UiController : MonoBehaviour {
 
 
         //Get the text component for each
-        Text name = usrName.GetComponent<Text>();
-        Text score = usrScore.GetComponent<Text>();
+        TextMeshProUGUI name = usrName.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI score = usrScore.GetComponent<TextMeshProUGUI>();
 
         //Set color based on the player's assigned colour
         name.color = score.color = player.GetComponent<Ball>().playerColour;
@@ -53,8 +75,8 @@ public class UiController : MonoBehaviour {
         score.text = "0";       
         
         //Position the text based on how many players
-        usrName.transform.position = usrName.transform.position - new Vector3(0, 20 * numPlayers, 0);
-        usrScore.transform.position = usrScore.transform.position - new Vector3(0, 20 * numPlayers, 0);
+        usrName.transform.position = usrName.transform.position - new Vector3(0, 30 * numPlayers, 0);
+        usrScore.transform.position = usrScore.transform.position - new Vector3(0, 30 * numPlayers, 0);
         player.GetComponent<Ball>().playerId = numPlayers;
         numPlayers++;
     }
@@ -68,8 +90,8 @@ public class UiController : MonoBehaviour {
         int position = player.GetComponent<Ball>().playerId;
         GameObject name = player.GetComponent<Ball>().scoreboardNameUi;
         GameObject score = player.GetComponent<Ball>().scoreBoardStrokeUi;
-        name.GetComponent<Text>().text = "PLAYER LEFT";
-        score.GetComponent<Text>().text = "DNF";
+        name.GetComponent<TextMeshProUGUI>().text = "PLAYER LEFT";
+        score.GetComponent<TextMeshProUGUI>().text = "DNF";
         
         //This'll be used when I've figured out a way to "resort" the scoreboard
         /*
