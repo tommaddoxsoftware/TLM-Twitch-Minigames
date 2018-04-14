@@ -7,6 +7,7 @@ using TMPro;
 public class UiController : MonoBehaviour {
 
     private int numPlayers = 0;
+    public float delay = 4f;
 
     private TextMeshProUGUI uiText;
     [SerializeField]
@@ -15,6 +16,8 @@ public class UiController : MonoBehaviour {
     private GameObject usrScorePrefab;
     [SerializeField]
     private GameObject usrWelcomePrefab;
+    [SerializeField]
+    private GameObject usrLeftGamePrefab;
 
 	public void UISetPlayerName(GameObject playerObj, string usrName)
     {
@@ -22,15 +25,17 @@ public class UiController : MonoBehaviour {
         uiText = playerObj.GetComponentInChildren<TextMeshProUGUI>();
 
         //Set their name, and set colour to player's assigned colour
-        uiText.text = usrName;
+        string usrName3L;
+        usrName3L = usrName.Substring(0, 3);
+
+        // uiText.text = usrName; // change uiText to full player name
+        uiText.text = usrName3L; // change uiText to only the first 3 letters of player name
         uiText.color = playerObj.GetComponent<Ball>().playerColour;
 
         //Welcome Player Message
 
-        float delay = 4f;
-
         // Spawn new game object of player join game message for the GUI
-        GameObject usrWelcomeMsg = Instantiate(usrWelcomePrefab, GameObject.Find("WelcomePlayer").transform);
+        GameObject usrWelcomeMsg = Instantiate(usrWelcomePrefab, GameObject.Find("PlayerMessage").transform);
 
         //Get the text component for the message
         TextMeshProUGUI message = usrWelcomeMsg.GetComponent<TextMeshProUGUI>();
@@ -39,7 +44,7 @@ public class UiController : MonoBehaviour {
         message.text = (usrName + " has joined the game!");
 
         // Set Position of message
-        message.transform.position = message.transform.position - new Vector3(0, 50, 0);
+        message.transform.position = message.transform.position - new Vector3(0, 30, 0);
 
         // Destroy the game object after the value of delay
         Destroy(usrWelcomeMsg, delay);
@@ -49,6 +54,8 @@ public class UiController : MonoBehaviour {
     {
        Random.seed = username.Length + (int)username[0] + (int)username[username.Length - 1];
         return new Color(Random.Range(0.25f, 0.55f), Random.Range(0.20f, 0.55f), Random.Range(0.25f, 0.55f));
+
+        //        return new Color(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
     }
 
     public void AddToScoreboard(string username, GameObject player)
@@ -90,9 +97,18 @@ public class UiController : MonoBehaviour {
         int position = player.GetComponent<Ball>().playerId;
         GameObject name = player.GetComponent<Ball>().scoreboardNameUi;
         GameObject score = player.GetComponent<Ball>().scoreBoardStrokeUi;
+
+        // Player Left GUI Message
+        GameObject usrLeaveGameMsg = Instantiate(usrLeftGamePrefab, GameObject.Find("PlayerMessage").transform);           // Spawn new game object of player that left the game
+        TextMeshProUGUI message = usrLeaveGameMsg.GetComponent<TextMeshProUGUI>();  //Get the text component for the message
+        message.text = (name.GetComponent<TextMeshProUGUI>().text + " has left the game!\n Booho");   // Set the join message
+        message.transform.position = message.transform.position - new Vector3(0, 30, 0);    // Set Position of message
+        Destroy(usrLeaveGameMsg, delay);    // Destroy the game object after the value of delay
+
         name.GetComponent<TextMeshProUGUI>().text = "PLAYER LEFT";
         score.GetComponent<TextMeshProUGUI>().text = "DNF";
-        
+
+
         //This'll be used when I've figured out a way to "resort" the scoreboard
         /*
         Destroy(name);
