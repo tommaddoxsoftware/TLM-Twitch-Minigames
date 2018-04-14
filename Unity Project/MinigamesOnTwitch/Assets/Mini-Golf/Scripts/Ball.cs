@@ -35,31 +35,23 @@ public class Ball : MonoBehaviour {
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
         oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
+        ScalePower();
     }
 	
 	// Update is called once per frame
 	void Update () {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
-        /*
-        Debug.Log("Speed: " + m_rigid.velocity.magnitude);
-       Debug.Log("Velocity: " + m_rigid.velocity);
-       */
-       if(m_rigid.velocity.magnitude < 0.3f)
+
+        if(m_rigid.velocity.magnitude < 0.3f)
         {
             StopBall();
         }
 
-       
-        velTxt.text = "Vel: " + this.GetComponent<Rigidbody>().velocity;
-        magTxt.text = "Mag: " + this.GetComponent<Rigidbody>().velocity.magnitude;
-
+        //Calculates the delta magnatude
         float magLoss = magLosStore - this.GetComponent<Rigidbody>().velocity.magnitude;
 
-        magLossTxt.text = "MLoss: " + magLoss;
-
-        magLosStore = this.GetComponent<Rigidbody>().velocity.magnitude;
-
-        if (m_inMotion && magLoss < 0.01)
+        //Checks if the ball is in motion and the delta magnitude
+        if (m_inMotion && magLoss < 0.02)
         {
             StopBall();
         }
@@ -139,9 +131,12 @@ public class Ball : MonoBehaviour {
 
     private void ScalePower()
     {
-        //Scale shit appropriately
-        power.transform.localScale = new Vector3(0.2f, 0.06f, m_power);
-        power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - m_power) / 2);
+        //Calculates a modified length so that the power indicator isn't massive
+        float altLenght = m_power / 6;
+
+        //Scale the angle and power indicator appropriately
+        power.transform.localScale = new Vector3(0.2f, 0.06f, 2 + altLenght);
+        power.transform.localPosition = new Vector3(0, 0, 0.9f + (altLenght / 2));
     }
 
     public void Command(string[] cmd)
