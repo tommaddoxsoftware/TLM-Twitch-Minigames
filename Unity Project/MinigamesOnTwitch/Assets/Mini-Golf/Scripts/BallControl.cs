@@ -88,8 +88,8 @@ public class BallControl : MonoBehaviour
 
             m_playerBalls[player].GetComponent<Ball>().Command(msgArray); //Runs ball commands for the player
 
-            //Set Ball UI
-            GameObject.Find("UiManager").GetComponent<UiController>().UISetPlayerName(m_playerBalls[player], user);
+            //Assign Player name
+            m_playerBalls[player].GetComponent<Ball>().usrName = user;
         }
     }
 
@@ -142,6 +142,7 @@ public class BallControl : MonoBehaviour
     {
         RemoveBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
+        GameObject.Find("UiManager").GetComponent<UiController>().RemoveFromScoreboard(m_playerBalls[index]);
         ResetBall(index);
     }
 
