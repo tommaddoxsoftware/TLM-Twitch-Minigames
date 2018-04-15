@@ -1,15 +1,16 @@
 fileFormatVersion: 2
-guid: 3033139a923a9684799f4c4fa32bbcc1
-timeCreated: 1523825010
+guid: af9f791615cc4d3478b918fb71c1bef3
+timeCreated: 1523826411
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
+    2100000: 'Material #2'
     2300000: //RootNode
     3300000: //RootNode
-    4300000: TILE 2x1 Cuve Out
+    4300000: TILE 2x1 Curve Out
     9500000: //RootNode
   externalObjects: {}
   materials:
