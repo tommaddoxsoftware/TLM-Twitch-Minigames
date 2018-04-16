@@ -9,7 +9,8 @@ public class UiController : MonoBehaviour {
     private int numPlayers = 0;
     public float delay = 4f;
 
-    private TextMeshProUGUI uiText;
+    // private TextMeshProUGUI uiText;
+    private Text uiText;
     [SerializeField]
     private GameObject usrNamePrefab;
     [SerializeField]
@@ -22,18 +23,23 @@ public class UiController : MonoBehaviour {
 	public void UISetPlayerName(GameObject playerObj, string usrName)
     {
         //Get the text object attached to ball UI
-        uiText = playerObj.GetComponentInChildren<TextMeshProUGUI>();
+        uiText = playerObj.GetComponentInChildren<Text>();
+        uiText.text = usrName;
 
+        /*
         //Set their name, and set colour to player's assigned colour
         string usrName3L;
         usrName3L = usrName.Substring(0, 3);
 
         // uiText.text = usrName; // change uiText to full player name
         uiText.text = usrName3L; // change uiText to only the first 3 letters of player name
+        */
+
+        //Set their name, and set colour to player's assigned colour
         uiText.color = playerObj.GetComponent<Ball>().playerColour;
 
         //Welcome Player Message
-
+        /*
         // Spawn new game object of player join game message for the GUI
         GameObject usrWelcomeMsg = Instantiate(usrWelcomePrefab, GameObject.Find("PlayerMessage").transform);
 
@@ -48,6 +54,7 @@ public class UiController : MonoBehaviour {
 
         // Destroy the game object after the value of delay
         Destroy(usrWelcomeMsg, delay);
+        */
     }
 
     public Color ColorFromUsername(string username)
@@ -71,8 +78,8 @@ public class UiController : MonoBehaviour {
 
 
         //Get the text component for each
-        TextMeshProUGUI name = usrName.GetComponent<TextMeshProUGUI>();
-        TextMeshProUGUI score = usrScore.GetComponent<TextMeshProUGUI>();
+        Text name = usrName.GetComponent<Text>();
+        Text score = usrScore.GetComponent<Text>();
 
         //Set color based on the player's assigned colour
         name.color = score.color = player.GetComponent<Ball>().playerColour;
@@ -101,12 +108,12 @@ public class UiController : MonoBehaviour {
         // Player Left GUI Message
         GameObject usrLeaveGameMsg = Instantiate(usrLeftGamePrefab, GameObject.Find("PlayerMessage").transform);           // Spawn new game object of player that left the game
         TextMeshProUGUI message = usrLeaveGameMsg.GetComponent<TextMeshProUGUI>();  //Get the text component for the message
-        message.text = (name.GetComponent<TextMeshProUGUI>().text + " has left the game!\n Booho");   // Set the join message
+        message.text = (name.GetComponent<Text>().text + " has left the game!\n Booho");   // Set the join message
         message.transform.position = message.transform.position - new Vector3(0, 30, 0);    // Set Position of message
         Destroy(usrLeaveGameMsg, delay);    // Destroy the game object after the value of delay
 
-        name.GetComponent<TextMeshProUGUI>().text = "PLAYER LEFT";
-        score.GetComponent<TextMeshProUGUI>().text = "DNF";
+        name.GetComponent<Text>().text = "PLAYER LEFT";
+        score.GetComponent<Text>().text = "DNF";
 
 
         //This'll be used when I've figured out a way to "resort" the scoreboard
