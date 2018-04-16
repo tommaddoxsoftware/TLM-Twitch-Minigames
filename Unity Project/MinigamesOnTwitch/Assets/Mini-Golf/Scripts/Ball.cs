@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Ball : MonoBehaviour {
     public GameObject aim;
@@ -145,7 +146,7 @@ public class Ball : MonoBehaviour {
 
                 //Update scores
                 strokeCount++;
-                GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
+                GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<TextMeshProUGUI>(), strokeCount.ToString());
 
                 /*******************/
                 /*     To Do:     */

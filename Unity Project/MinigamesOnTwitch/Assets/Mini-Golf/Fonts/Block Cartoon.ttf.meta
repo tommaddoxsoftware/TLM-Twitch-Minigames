@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: c75dbd7916e630e49b8c16ee36087247
+timeCreated: 1523832142
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: BLOCK CARTOON
+  fontNames:
+  - BLOCK CARTOON
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

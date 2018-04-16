@@ -88,7 +88,7 @@ public class UiController : MonoBehaviour {
         numPlayers++;
     }
 
-    public void UpdateScore(Text scoreText, string newScore) {
+    public void UpdateScore(TextMeshProUGUI scoreText, string newScore) {
         scoreText.text = newScore;
     }
 
