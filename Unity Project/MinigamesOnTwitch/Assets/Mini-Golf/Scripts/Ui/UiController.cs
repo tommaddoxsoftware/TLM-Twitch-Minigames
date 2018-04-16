@@ -59,10 +59,8 @@ public class UiController : MonoBehaviour {
 
     public Color ColorFromUsername(string username)
     {
-       Random.seed = username.Length + (int)username[0] + (int)username[username.Length - 1];
-        return new Color(Random.Range(0.25f, 0.55f), Random.Range(0.20f, 0.55f), Random.Range(0.25f, 0.55f));
-
-        //        return new Color(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
+        Random.seed = username.Length + (int)username[0] + (int)username[username.Length - 1];
+        return new Color(Random.Range(0.15f, 0.55f), Random.Range(0.10f, 0.55f), Random.Range(0.15f, 0.55f));
     }
 
     public void AddToScoreboard(string username, GameObject player)
@@ -89,8 +87,8 @@ public class UiController : MonoBehaviour {
         score.text = "0";       
         
         //Position the text based on how many players
-        usrName.transform.position = usrName.transform.position - new Vector3(0, 30 * numPlayers, 0);
-        usrScore.transform.position = usrScore.transform.position - new Vector3(0, 30 * numPlayers, 0);
+        usrName.transform.position = usrName.transform.position - new Vector3(0, 50 * numPlayers, 0);
+        usrScore.transform.position = usrScore.transform.position - new Vector3(0, 50 * numPlayers, 0);
         player.GetComponent<Ball>().playerId = numPlayers;
         numPlayers++;
     }
