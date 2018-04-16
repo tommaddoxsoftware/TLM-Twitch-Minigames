@@ -8,6 +8,8 @@ public class UiManager : MonoBehaviour {
     private InputField usernameInput;
     [SerializeField]
     private InputField oauthInput;
+    [SerializeField]
+    private InputField channelInput;
 
     private void Start()
     {
@@ -15,10 +17,12 @@ public class UiManager : MonoBehaviour {
         usernameInput.onEndEdit.AddListener(delegate { SetUsername(usernameInput); });
         oauthInput.onEndEdit.AddListener(delegate { SetOAuth(oauthInput); });
 
+
         if (PlayerPrefs.HasKey("TwitchUsr"))
             usernameInput.text = PlayerPrefs.GetString("TwitchUsr");
         if (PlayerPrefs.HasKey("TwitchAuth"))
             oauthInput.text = PlayerPrefs.GetString("TwitchAuth");
+
     }
     
     public void GetTwitchAuth()
