@@ -11,13 +11,23 @@ public class Ball : MonoBehaviour {
     public GameObject aim;
     public GameObject power;
 
+
     public int maxPower = 50;
     public int minPower = 1;
+
+    public GameObject scoreBoardStrokeUi;
+    public GameObject scoreboardNameUi;
+    public int playerId;
+
 
     private int m_lockPos = 0;
     private int m_angle;
 
     private float m_power = 1;
+
+    public string usrName;
+    public Color playerColour;
+    private int strokeCount = 0;
 
     //Used to control respawning
     private bool m_outOfBounds = false;
@@ -34,9 +44,22 @@ public class Ball : MonoBehaviour {
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
+
         oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
+
         ScalePower();
-    }
+ 
+
+        //Generate a colour for the player
+        playerColour = GameObject.Find("UiManager").GetComponent<UiController>().ColorFromUsername(usrName);
+
+        //Once we have a colour, add them to the scoreboard UI, and set the ball UI (Their username)
+        GameObject uiManager = GameObject.Find("UiManager");
+        uiManager.GetComponent<UiController>().AddToScoreboard(usrName, this.gameObject);
+        uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
+
+     }
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -142,7 +165,7 @@ public class Ball : MonoBehaviour {
     public void Command(string[] cmd)
     {
         //Propells the ball in the direction
-        if (cmd[0].ToLower() == "hit")
+        if (cmd[0].ToLower() == "!hit")
         {
             
             if (m_rigid.velocity == Vector3.zero)
@@ -156,17 +179,28 @@ public class Ball : MonoBehaviour {
                 m_rigid.velocity = -dir * m_power; //Applys the velocity to the ball
 
                 Invoke("SetMovement", 3);
+
+                //Update scores
+                strokeCount++;
+                GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
+
+                /*******************/
+                /*     To Do:     */
+                /*****************/
+                //Store each player's score per course
+                //Only display score per course
+
             }
         }
 
-        if (cmd[0].ToLower() == "stop")
+        if (cmd[0].ToLower() == "!stop")
         {
             StopBall();
         }
 
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "angle")
+        if (cmd[0].ToLower() == "!angle" || cmd[0].ToLower() == "!an")
         {
             try //Trys to convert the command to a string
             {
@@ -180,7 +214,7 @@ public class Ball : MonoBehaviour {
             catch { }
         }
 
-        if (cmd[0].ToLower() == "adjust")
+        if (cmd[0].ToLower() == "!adjust" || cmd[0].ToLower() == "!ad")
         {
             try
             {
@@ -202,7 +236,7 @@ public class Ball : MonoBehaviour {
         }
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "power")
+        if (cmd[0].ToLower() == "!power" || cmd[0].ToLower() == "!pwr")
         {
             try
             {
