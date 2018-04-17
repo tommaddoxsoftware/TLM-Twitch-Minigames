@@ -23,21 +23,23 @@ public class UiController : MonoBehaviour {
     private Animation cameraIntro;
     [SerializeField]
     private GameObject gameUi;
+
     private void Start()
-    {    
-        mainCam = Camera.main;
-        
+    {
+        gameUi.SetActive(false);
+        mainCam = Camera.main;        
     }
+
     private void Update()
     {
         Animator anim = mainCam.GetComponent<Animator>();
-
-        
+                
         if (!animFin)
         {
             if(anim.GetCurrentAnimatorStateInfo(0).IsName("Camera Idle"))
             {
                 animFin = true;
+                anim.enabled = false;
                 gameUi.SetActive(true);
             }
         }
