@@ -8,7 +8,6 @@ public class UiController : MonoBehaviour {
     private int numPlayers = 0;
     public float delay = 4f;
 
-    // private TextMeshProUGUI uiText;
     private Text uiText;
     [SerializeField]
     private GameObject usrNamePrefab;
@@ -19,7 +18,32 @@ public class UiController : MonoBehaviour {
     [SerializeField]
     private GameObject usrLeftGamePrefab;
 
-	public void UISetPlayerName(GameObject playerObj, string usrName)
+    private bool animFin = false;
+    private Camera mainCam;    
+    private Animation cameraIntro;
+    [SerializeField]
+    private GameObject gameUi;
+    private void Start()
+    {    
+        mainCam = Camera.main;
+        
+    }
+    private void Update()
+    {
+        Animator anim = mainCam.GetComponent<Animator>();
+
+        
+        if (!animFin)
+        {
+            if(anim.GetCurrentAnimatorStateInfo(0).IsName("Camera Idle"))
+            {
+                animFin = true;
+                gameUi.SetActive(true);
+            }
+        }
+        
+    }
+    public void UISetPlayerName(GameObject playerObj, string usrName)
     {
         //Get the text object attached to ball UI
         uiText = playerObj.GetComponentInChildren<Text>();
