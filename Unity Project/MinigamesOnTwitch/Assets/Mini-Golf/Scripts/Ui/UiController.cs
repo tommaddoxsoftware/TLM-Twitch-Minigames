@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class UiController : MonoBehaviour {
 
     private int numPlayers = 0;
+    private float fadeSpeed = 1.0f;
     public float delay = 4f;
 
     private Text uiText;
@@ -14,9 +15,8 @@ public class UiController : MonoBehaviour {
     [SerializeField]
     private GameObject usrScorePrefab;
     [SerializeField]
-    private GameObject usrWelcomePrefab;
-    [SerializeField]
-    private GameObject usrLeftGamePrefab;
+    private Text usrEventText;
+   
 
     private bool animFin = false;
     private Camera mainCam;    
@@ -49,35 +49,17 @@ public class UiController : MonoBehaviour {
         uiText = playerObj.GetComponentInChildren<Text>();
         uiText.text = usrName;
 
-        /*
-        //Set their name, and set colour to player's assigned colour
-        string usrName3L;
-        usrName3L = usrName.Substring(0, 3);
-
-        // uiText.text = usrName; // change uiText to full player name
-        uiText.text = usrName3L; // change uiText to only the first 3 letters of player name
-        */
-
         //Set their name, and set colour to player's assigned colour
         uiText.color = playerObj.GetComponent<Ball>().playerColour;
 
-        //Welcome Player Message
-        /*
-        // Spawn new game object of player join game message for the GUI
-        GameObject usrWelcomeMsg = Instantiate(usrWelcomePrefab, GameObject.Find("PlayerMessage").transform);
+        //Send player joined event
+        SendEventMessage(usrEventText, "Welcome, " + usrName);
+    }
 
-        //Get the text component for the message
-        TextMeshProUGUI message = usrWelcomeMsg.GetComponent<TextMeshProUGUI>();
-
-        // Set the join message
-        message.text = (usrName + " has joined the game!");
-
-        // Set Position of message
-        message.transform.position = message.transform.position - new Vector3(0, 30, 0);
-
-        // Destroy the game object after the value of delay
-        Destroy(usrWelcomeMsg, delay);
-        */
+    private void SendEventMessage(Text eventText, string newMsg)
+    {
+        eventText.text = newMsg;
+        FadeIn(1.0f, eventText);
     }
 
     public Color ColorFromUsername(string username)
@@ -126,15 +108,45 @@ public class UiController : MonoBehaviour {
         GameObject name = player.GetComponent<Ball>().scoreboardNameUi;
         GameObject score = player.GetComponent<Ball>().scoreBoardStrokeUi;
 
-        // Player Left GUI Message
-        GameObject usrLeaveGameMsg = Instantiate(usrLeftGamePrefab, GameObject.Find("PlayerMessage").transform);           // Spawn new game object of player that left the game
-        Text message = usrLeaveGameMsg.GetComponent<Text>();  //Get the text component for the message
-        message.text = (name.GetComponent<Text>().text + " has left the game!\n Booho");   // Set the join message
-        message.transform.position = message.transform.position - new Vector3(0, 30, 0);    // Set Position of message
-        Destroy(usrLeaveGameMsg, delay);    // Destroy the game object after the value of delay
-
         name.GetComponent<Text>().text = "PLAYER LEFT";
         score.GetComponent<Text>().text = "DNF";
+    }
+
+    public void FadeIn(float fadeSpeed, Text textToUse)
+    {       
+        StartCoroutine(FadeInText(fadeSpeed,textToUse));
+    }
+    public void FadeOut(float fadeSpeed, Text textToUse)
+    {
+        StartCoroutine(FadeOutText(fadeSpeed, textToUse));
+    }
+
+    private IEnumerator FadeInText(float fadeSpeed, Text text)
+    {
+        //Set alpha to 0
+        text.color = new Color(text.color.r, text.color.g, text.color.b, 0);
+
+        //While alpha is less than 1, fade it in.
+        while(text.color.a < 1.0f)
+        {
+            text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a + (Time.deltaTime * fadeSpeed));
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(4.0f);
+        FadeOut(fadeSpeed, usrEventText);
+    }
+    private IEnumerator FadeOutText(float fadeSpeed, Text text)
+    {
+        //Set alpha to 1
+        text.color = new Color(text.color.r, text.color.g, text.color.b, 1);
+
+        //While alpha is less than 1, fade it in.
+        while (text.color.a > 0.0f)
+        {
+            text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - (Time.deltaTime * fadeSpeed));
+            yield return null;
+        }
     }
 
 
