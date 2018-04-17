@@ -5,12 +5,21 @@ using UnityEngine.UI;
 using TMPro;
 
 public class Ball : MonoBehaviour {
+    public Text velTxt;
+    public Text magTxt;
+    public Text magLossTxt;
+
     public GameObject aim;
     public GameObject power;
+
+
+    public int maxPower = 50;
+    public int minPower = 1;
 
     public GameObject scoreBoardStrokeUi;
     public GameObject scoreboardNameUi;
     public int playerId;
+
 
     private int m_lockPos = 0;
     private int m_angle;
@@ -27,10 +36,20 @@ public class Ball : MonoBehaviour {
 
     private Rigidbody m_rigid;
 
+    private bool m_inMotion = false;
+
+    private int oobTimeout;
+
+    private float magLosStore = 0;
 
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
+
+        oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
+
+        ScalePower();
+ 
 
         //Generate a colour for the player
         playerColour = GameObject.Find("UiManager").GetComponent<UiController>().ColorFromUsername(usrName);
@@ -39,20 +58,27 @@ public class Ball : MonoBehaviour {
         GameObject uiManager = GameObject.Find("UiManager");
         uiManager.GetComponent<UiController>().AddToScoreboard(usrName, this.gameObject);
         uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
+
      }
+
 	
 	// Update is called once per frame
 	void Update () {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
-/*
-        Debug.Log("Speed: " + m_rigid.velocity.magnitude);
-       Debug.Log("Velocity: " + m_rigid.velocity);
-       */
-       if(m_rigid.velocity.magnitude < 0.07f)
+
+        if(m_rigid.velocity.magnitude < 0.3f)
         {
             StopBall();
         }
 
+        //Calculates the delta magnatude
+        float magLoss = magLosStore - this.GetComponent<Rigidbody>().velocity.magnitude;
+
+        //Checks if the ball is in motion and the delta magnitude
+        if (m_inMotion && magLoss < 0.02)
+        {
+            StopBall();
+        }
     }
 
     private void OnCollisionExit(Collision coll)
@@ -87,7 +113,7 @@ public class Ball : MonoBehaviour {
     IEnumerator OutOfBoundsTimer()
     {
         //Wait for 3 seconds - then perform an OutOfBounds check. This value should probably be set via an editor value
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(oobTimeout);
         if(m_outOfBounds)
         {            
             Respawn(m_lastPosition);
@@ -106,11 +132,17 @@ public class Ball : MonoBehaviour {
         m_rigid.isKinematic = false;
     }
 
+    private void SetMovement()
+    {
+        m_inMotion = true;
+    }
+
     public void StopBall()
     {
         this.transform.GetChild(0).gameObject.SetActive(true);
         m_rigid.isKinematic = true;
         m_rigid.isKinematic = false;
+        m_inMotion = false;
     }
 
     //Resets the balls angle and power to 0
@@ -123,15 +155,18 @@ public class Ball : MonoBehaviour {
 
     private void ScalePower()
     {
-        //Scale shit appropriately
-        power.transform.localScale = new Vector3(0.2f, 0.06f, m_power);
-        power.transform.localPosition = new Vector3(0, 0, 0.9f - (1 - m_power) / 2);
+        //Calculates a modified length so that the power indicator isn't massive
+        float altLenght = m_power / 6;
+
+        //Scale the angle and power indicator appropriately
+        power.transform.localScale = new Vector3(0.2f, 0.06f, 2 + altLenght);
+        power.transform.localPosition = new Vector3(0, 0, 0.9f + (altLenght / 2));
     }
 
     public void Command(string[] cmd)
     {
         //Propells the ball in the direction
-        if (cmd[0].ToLower() == "hit")
+        if (cmd[0].ToLower() == "!hit")
         {
             
             if (m_rigid.velocity == Vector3.zero)
@@ -144,6 +179,8 @@ public class Ball : MonoBehaviour {
 
                 m_rigid.velocity = -dir * m_power; //Applys the velocity to the ball
 
+                Invoke("SetMovement", 3);
+
                 //Update scores
                 strokeCount++;
                 GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<TextMeshProUGUI>(), strokeCount.ToString());
@@ -153,17 +190,18 @@ public class Ball : MonoBehaviour {
                 /*****************/
                 //Store each player's score per course
                 //Only display score per course
+
             }
         }
 
-        if (cmd[0].ToLower() == "stop")
+        if (cmd[0].ToLower() == "!stop")
         {
             StopBall();
         }
 
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "angle")
+        if (cmd[0].ToLower() == "!angle" || cmd[0].ToLower() == "!an")
         {
             try //Trys to convert the command to a string
             {
@@ -177,7 +215,7 @@ public class Ball : MonoBehaviour {
             catch { }
         }
 
-        if (cmd[0].ToLower() == "adjust")
+        if (cmd[0].ToLower() == "!adjust" || cmd[0].ToLower() == "!ad")
         {
             try
             {
@@ -199,26 +237,24 @@ public class Ball : MonoBehaviour {
         }
 
         //Sets the angle of the ball
-        if (cmd[0].ToLower() == "power")
+        if (cmd[0].ToLower() == "!power" || cmd[0].ToLower() == "!pwr")
         {
             try
             {
                 float pwVal = float.Parse(cmd[1]);
 
-                if (pwVal >= 1 && pwVal <= 10) //Checks if the angle is valid
+                if (pwVal >= minPower && pwVal <= maxPower) //Checks if the angle is valid
                 {
                     m_power = pwVal;                    
                 }
-                if(pwVal > 10)
+                if(pwVal > maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
-                    //For now, set to 10
-                    m_power = 10;
-                    
+                    m_power = maxPower; 
                 }
-                if (pwVal < 1)
+                if (pwVal < minPower)
                 {
-                    m_power = 1;                    
+                    m_power = minPower;                    
                 }
 
                 ScalePower();

@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(TwitchIRC))]
 public class GameJoin : MonoBehaviour {
-    public int playerCount = 4;
+    public int playerCount;
     public int maxMessages = 100;
     public bool requireJoin = true; 
 
@@ -20,6 +20,8 @@ public class GameJoin : MonoBehaviour {
         //m_IRC = this.GetComponent<TwitchIRC>();
         //m_IRC.messageRecievedEvent.AddListener(OnChatMsgRecieved);
 
+        //Get Player count from playerprefs (Set in game config on main menu)
+        playerCount = PlayerPrefs.GetInt("MaxPlayers");
         m_players = new string[playerCount];
         for (int i = 0; i < m_players.Length; i++)
         {

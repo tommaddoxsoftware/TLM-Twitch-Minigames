@@ -18,6 +18,6 @@ public class UiLookAtCamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void LateUpdate () {
-        transform.rotation = origRot * Quaternion.Euler(0, gameCam.transform.rotation.eulerAngles.y,0);        
+        transform.rotation = origRot * Quaternion.Euler(0, gameCam.transform.rotation.eulerAngles.y,0);
 	}
 }

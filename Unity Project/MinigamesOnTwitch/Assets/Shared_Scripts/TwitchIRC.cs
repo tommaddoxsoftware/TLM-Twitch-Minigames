@@ -124,6 +124,13 @@ public class TwitchIRC : MonoBehaviour
     //MonoBehaviour Events.
     void Start()
     {
+        //Set nickname and OAuth
+        if (PlayerPrefs.HasKey("TwitchAuth"))
+            oauth = PlayerPrefs.GetString("TwitchAuth");
+        if (PlayerPrefs.HasKey("TwitchUsr"))
+            nickName = channelName = PlayerPrefs.GetString("TwitchUsr").ToLower();
+
+       
     }
 
     void OnEnable()
