@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class UiController : MonoBehaviour {
 
@@ -93,7 +92,7 @@ public class UiController : MonoBehaviour {
         numPlayers++;
     }
 
-    public void UpdateScore(TextMeshProUGUI scoreText, string newScore) {
+    public void UpdateScore(Text scoreText, string newScore) {
         scoreText.text = newScore;
     }
 
@@ -105,21 +104,13 @@ public class UiController : MonoBehaviour {
 
         // Player Left GUI Message
         GameObject usrLeaveGameMsg = Instantiate(usrLeftGamePrefab, GameObject.Find("PlayerMessage").transform);           // Spawn new game object of player that left the game
-        TextMeshProUGUI message = usrLeaveGameMsg.GetComponent<TextMeshProUGUI>();  //Get the text component for the message
+        Text message = usrLeaveGameMsg.GetComponent<Text>();  //Get the text component for the message
         message.text = (name.GetComponent<Text>().text + " has left the game!\n Booho");   // Set the join message
         message.transform.position = message.transform.position - new Vector3(0, 30, 0);    // Set Position of message
         Destroy(usrLeaveGameMsg, delay);    // Destroy the game object after the value of delay
 
         name.GetComponent<Text>().text = "PLAYER LEFT";
         score.GetComponent<Text>().text = "DNF";
-
-
-        //This'll be used when I've figured out a way to "resort" the scoreboard
-        /*
-        Destroy(name);
-        Destroy(score);
-        */
-
     }
 
 
