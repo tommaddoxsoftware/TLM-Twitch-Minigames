@@ -9,7 +9,8 @@ public class LevelController : MonoBehaviour
     public GameObject[] levels;
 
     //Private
-    private GameObject[,] m_objectives;
+    private GameObject[] m_starts;
+    private GameObject[] m_ends;
 
     private BallControl m_ballControl;
 
@@ -20,18 +21,20 @@ public class LevelController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        m_ballControl = this.GetComponent<BallControl>(); //Finds the ball controller
+        //Gets the ball controller
+        m_ballControl = this.GetComponent<BallControl>(); 
 
         m_level = 0; //Starts the level at level 1
 
-        m_objectives = new GameObject[levels.Length, 2]; //Sets up the array for the start and finish  
-                                                            //[level,0] start | [level,1] end
+        m_starts = new GameObject[levels.Length];
+        m_ends = new GameObject[levels.Length];
 
         //Finds the start and finish for all levels 
         for (int i = 0; i < levels.Length; i++)
         {
-            m_objectives[i, 0] = levels[i].transform.Find("Start").gameObject;
-            m_objectives[i, 1] = levels[i].transform.Find("End").gameObject;
+            //Finds the start
+            m_starts[i] = levels[i].transform.Find("START").gameObject;
+            m_ends[i] = levels[i].transform.Find("END").gameObject;
         }
     }
 
@@ -46,7 +49,8 @@ public class LevelController : MonoBehaviour
 
     public bool CheckAllFinished()
     {
-        List<int> playingPlayers = this.GetComponent<GameJoin>().GetActivePlayers(); //Gets the active players indexes
+        //Gets the active players indexes
+        List<int> playingPlayers = this.GetComponent<GameJoin>().GetActivePlayers(); 
 
         for (int i = 0; i < playingPlayers.Count; i++)
         {
@@ -68,8 +72,11 @@ public class LevelController : MonoBehaviour
         //If the object isnt a ball do nothing
         if (ballIndex != -1)
         {
-            m_playerState[ballIndex] = true; //Changes the balls state
-            m_ballControl.HideBall(ballIndex); //Hides the ball
+            //Changes the balls state
+            m_playerState[ballIndex] = true; 
+
+            //Hides the ball
+            m_ballControl.HideBall(ballIndex); 
 
             //Checks to see that all balls have finished
             if (CheckAllFinished())
@@ -77,7 +84,8 @@ public class LevelController : MonoBehaviour
                 //Stops the game from going over the number of holes
                 if (m_level < levels.Length - 1)
                 {
-                    m_level++; //Increases the level
+                    //Increases the level
+                    m_level++; 
                 }
                 else
                 {
@@ -109,6 +117,6 @@ public class LevelController : MonoBehaviour
     //Gives the position of the current levels start point
     public Vector3 StartPos
     {
-        get { return m_objectives[m_level, 0].transform.position; }
+        get { return m_starts[m_level].transform.position; }
     }
 }
