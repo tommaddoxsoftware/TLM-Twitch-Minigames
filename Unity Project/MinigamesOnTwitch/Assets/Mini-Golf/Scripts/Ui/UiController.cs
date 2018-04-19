@@ -9,41 +9,107 @@ public class UiController : MonoBehaviour {
     private float fadeSpeed = 1.0f;
     public float delay = 4f;
 
+    //Player name text above ball
     private Text uiText;
+
+    //Scoreboard text prefabs
     [SerializeField]
     private GameObject usrNamePrefab;
     [SerializeField]
     private GameObject usrScorePrefab;
     [SerializeField]
+
+    //Event Popup text
     private Text usrEventText;
    
-
+    //Stores Main Camera and its animation controller.
     private bool animFin = false;
-    private Camera mainCam;    
-    private Animation cameraIntro;
+    private Camera mainCam;
+    private Animator anim;
+
+    //Entire Game UI panel
     [SerializeField]
     private GameObject gameUi;
 
+    //Stores the total number of courses
+    private int numCourses;
+
+    //Level Timer
+    System.TimeSpan timer;
+
+    //Get UI components for Game Vars
+    [SerializeField]
+    private Text courseNumUi;
+    [SerializeField]
+    private Text themeNameUi;
+    [SerializeField]
+    private Text timerUi;
+
     private void Start()
     {
+        //Disable UI and grab the camera (for flyby anim)
         gameUi.SetActive(false);
-        mainCam = Camera.main;        
+        mainCam = Camera.main;
+        anim = mainCam.GetComponent<Animator>();
+
+        //Get total number of courses
+        numCourses = GameObject.Find("MinigameManager").GetComponent<LevelController>().levels.Length;
+
     }
 
     private void Update()
     {
-        Animator anim = mainCam.GetComponent<Animator>();
-                
+
+        //Check whether the intro is complete
         if (!animFin)
         {
             if(anim.GetCurrentAnimatorStateInfo(0).IsName("Camera Idle"))
             {
+                //Disable the animation, cancel the condition for this statement
                 animFin = true;
                 anim.enabled = false;
+
+                //Enable game UI and set text values, sent event to text popup
                 gameUi.SetActive(true);
+                SetCourseNum(1);
+                SetThemeName("Script Test");
+                SetTimer(300);
+                SendEventMessage(usrEventText, "Type !join to participate");
             }
         }
         
+    }
+    private void SetCourseNum(int newCourseNum)
+    {       
+        //Set the text
+        courseNumUi.text = newCourseNum.ToString() + "/" + numCourses;
+
+    }
+    private void SetThemeName(string name)
+    {
+        //Set theme name text
+        themeNameUi.text = name;
+    }
+    private void SetTimer(int seconds)
+    {
+        timer = System.TimeSpan.FromSeconds(seconds);
+        timerUi.text = string.Format("{0}:{1:D2}", (int)timer.TotalMinutes, timer.Seconds);
+    }
+    public void StartTimer(int seconds)
+    {
+
+    }
+    private IEnumerator Countdown(int seconds)
+    {
+        //If the next tick isn't 0, count down
+        if (--seconds > 0)
+        {
+            seconds--;
+            yield return new WaitForSeconds(1);
+            SetTimer(seconds);
+        }
+        else
+            yield break;
     }
     public void UISetPlayerName(GameObject playerObj, string usrName)
     {
@@ -60,12 +126,14 @@ public class UiController : MonoBehaviour {
 
     private void SendEventMessage(Text eventText, string newMsg)
     {
+        //Set the event text to a new message, start the fade in function
         eventText.text = newMsg;
         FadeIn(1.0f, eventText);
     }
 
     public Color ColorFromUsername(string username)
     {
+        //Generate a colour from the username length
         Random.seed = username.Length + (int)username[0] + (int)username[username.Length - 1];
         return new Color(Random.Range(0.15f, 0.55f), Random.Range(0.10f, 0.55f), Random.Range(0.15f, 0.55f));
     }
@@ -101,25 +169,31 @@ public class UiController : MonoBehaviour {
     }
 
     public void UpdateScore(Text scoreText, string newScore) {
+        //Change the user's score on the scoreboard
         scoreText.text = newScore;
     }
 
     public void RemoveFromScoreboard(GameObject player)
     {
-        int position = player.GetComponent<Ball>().playerId;
+        
+        //int position = player.GetComponent<Ball>().playerId;
+        //Get player's UI components on scoreboard
         GameObject name = player.GetComponent<Ball>().scoreboardNameUi;
         GameObject score = player.GetComponent<Ball>().scoreBoardStrokeUi;
 
+        //Set the text correctly.
         name.GetComponent<Text>().text = "PLAYER LEFT";
         score.GetComponent<Text>().text = "DNF";
     }
 
     public void FadeIn(float fadeSpeed, Text textToUse)
-    {       
+    {
+
+        StopAllCoroutines();
         StartCoroutine(FadeInText(fadeSpeed,textToUse));
     }
     public void FadeOut(float fadeSpeed, Text textToUse)
-    {
+    {        
         StartCoroutine(FadeOutText(fadeSpeed, textToUse));
     }
 
