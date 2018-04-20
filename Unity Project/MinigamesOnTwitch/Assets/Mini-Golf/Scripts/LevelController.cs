@@ -32,10 +32,18 @@ public class LevelController : MonoBehaviour
         //Finds the start and finish for all levels 
         for (int i = 0; i < levels.Length; i++)
         {
-            //Finds the start
+            //Finds the start and ends
             m_starts[i] = levels[i].transform.Find("START").gameObject;
             m_ends[i] = levels[i].transform.Find("END").gameObject;
+            
+            //Disables objectives
+            m_starts[i].SetActive(false);
+            m_ends[i].SetActive(false);
         }
+
+        //Activates starting level
+        m_starts[0].SetActive(true);
+        m_ends[0].SetActive(true);
     }
 
     // Update is called once per frame
@@ -54,7 +62,8 @@ public class LevelController : MonoBehaviour
 
         for (int i = 0; i < playingPlayers.Count; i++)
         {
-            if (!m_playerState[playingPlayers[i]]) //Checks if that player has finnished
+            //Checks if that player has finnished
+            if (!m_playerState[playingPlayers[i]]) 
             {
                 return false;
             }
@@ -84,15 +93,32 @@ public class LevelController : MonoBehaviour
                 //Stops the game from going over the number of holes
                 if (m_level < levels.Length - 1)
                 {
+                    //Deactivates the level that was just done
+                    m_starts[m_level].SetActive(false);
+                    m_ends[m_level].SetActive(false);
+
                     //Increases the level
-                    m_level++; 
+                    m_level++;
+
+                    //Activates the next level
+                    m_starts[m_level].SetActive(true);
+                    m_ends[m_level].SetActive(true);
                 }
                 else
                 {
                     //##CODE FOR END GAME##
+                    //Temp code repeats level
+                    m_starts[m_level].SetActive(false);
+                    m_ends[m_level].SetActive(false);
+
+                    m_level = 0;
+
+                    m_starts[m_level].SetActive(true);
+                    m_ends[m_level].SetActive(true);
                 }
 
-                m_ballControl.MoveBalls(); //Move the balls to the new start point
+                //Move the balls to the new start point
+                m_ballControl.MoveBalls(); 
 
                 ResetBallState(); 
             }
