@@ -18,6 +18,15 @@ public class LevelController : MonoBehaviour
 
     private int m_level;
 
+    [Tooltip("Customisable name for start point")]
+    [SerializeField]
+    private string m_startName = "Start";
+
+    [Tooltip ("Customisable name for end point")]
+    [SerializeField]
+    private string m_endName = "End";
+
+
     // Use this for initialization
     void Start()
     {
@@ -32,6 +41,7 @@ public class LevelController : MonoBehaviour
         //Finds the start and finish for all levels 
         for (int i = 0; i < levels.Length; i++)
         {
+<<<<<<< HEAD
             //Finds the start and ends
             m_starts[i] = levels[i].transform.Find("START").gameObject;
             m_ends[i] = levels[i].transform.Find("END").gameObject;
@@ -39,6 +49,10 @@ public class LevelController : MonoBehaviour
             //Disables objectives
             m_starts[i].SetActive(false);
             m_ends[i].SetActive(false);
+=======
+            m_objectives[i, 0] = levels[i].transform.Find(m_startName).gameObject;
+            m_objectives[i, 1] = levels[i].transform.Find(m_endName).gameObject;
+>>>>>>> feature/LevelCreation_StandardTheme
         }
 
         //Activates starting level
