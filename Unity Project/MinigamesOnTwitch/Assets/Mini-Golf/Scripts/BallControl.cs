@@ -86,7 +86,11 @@ public class BallControl : MonoBehaviour
         {
             //ball.Command(msgArray); //Runs ball commands
 
-            m_playerBalls[player].GetComponent<Ball>().Command(msgArray); //Runs ball commands for the player
+            //Runs ball commands for the player
+            string response = m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
+
+            if (response != null)
+                m_IRC.SendMsg(response); 
 
             //Assign Player name
             m_playerBalls[player].GetComponent<Ball>().usrName = user;
@@ -134,8 +138,6 @@ public class BallControl : MonoBehaviour
         CreateBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         ResetBall(index);
-
-        
     }
 
     public void PlayerLeft(int index)
