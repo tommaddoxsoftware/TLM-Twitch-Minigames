@@ -70,6 +70,7 @@ public class UiController : MonoBehaviour {
                 anim.enabled = false;
 
                 //Enable game UI and set text values, sent event to text popup
+                mainCam.rect = new Rect(0.1875f, 0, 0.625f, 0);
                 gameUi.SetActive(true);
                 SetCourseNum(1);
                 SetThemeName("Script Test");
