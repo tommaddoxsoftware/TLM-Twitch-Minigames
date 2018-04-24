@@ -203,12 +203,18 @@ public class Ball : MonoBehaviour {
         power.transform.localPosition = new Vector3(0, 0, 0.9f + (altLenght / 2));
     }
 
-    public void Command(string[] cmd)
+    public string Command(string[] cmd, string user)
     {
+        if (cmd[0].ToLower() == "!join")
+            return null;
+
+        //Starts the bots response string
+        string response = user + " ";
+
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
         {
-            
+          
             if (m_rigid.velocity == Vector3.zero)
             {
                 //Store the transform (so we can access the position) before we fire the ball
@@ -231,6 +237,11 @@ public class Ball : MonoBehaviour {
                 //Store each player's score per course
                 //Only display score per course
 
+                response += "hit accepted";
+            }
+            else
+            {
+                response += "ball is not stationary";
             }
         }
 
@@ -248,10 +259,16 @@ public class Ball : MonoBehaviour {
                 int angVal = int.Parse(cmd[1]);
 
                 //Checks if the angle is valid
-                if (angVal >= 0 || angVal <= 360) 
+                if (angVal >= 0 || angVal <= 360)
                 {
                     //Stores the angle
-                    m_angle = angVal; 
+                    m_angle = angVal;
+
+                    response += "new angle: " + cmd[1];
+                }
+                else
+                {
+                    response += "invalid angle";
                 }
             }
             catch { }
@@ -274,6 +291,8 @@ public class Ball : MonoBehaviour {
                 }
 
                 m_angle = adjVal;
+
+                response += "new angle: " + m_angle;
             }
         
         catch { }
@@ -289,16 +308,19 @@ public class Ball : MonoBehaviour {
                 //Checks if the angle is valid
                 if (pwVal >= minPower && pwVal <= maxPower) 
                 {
-                    m_power = pwVal;                    
+                    m_power = pwVal;
+                    response += "new power: " + m_power;
                 }
                 if(pwVal > maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
-                    m_power = maxPower; 
+                    m_power = maxPower;
+                    response += "over max power setting to: " + m_power;
                 }
                 if (pwVal < minPower)
                 {
                     m_power = minPower;
+                    response += "under max power setting to: " + m_power;
                 }
 
                 ScalePower();
@@ -309,6 +331,9 @@ public class Ball : MonoBehaviour {
         if (cmd[0].ToLower() == "!reset")
         {
             this.transform.position = m_start;
+            response += "reseting ball to start";
         }
+
+        return response; 
     }
 }
