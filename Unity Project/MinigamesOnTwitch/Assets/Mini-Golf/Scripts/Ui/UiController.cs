@@ -48,7 +48,7 @@ public class UiController : MonoBehaviour {
     private void Start()
     {
         //Disable UI and grab the camera (for flyby anim)
-        gameUi.SetActive(false);
+        //gameUi.SetActive(false);
         mainCam = Camera.main;
         anim = mainCam.GetComponent<Animator>();
 
