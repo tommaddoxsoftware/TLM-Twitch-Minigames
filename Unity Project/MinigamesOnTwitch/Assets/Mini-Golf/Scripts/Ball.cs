@@ -4,13 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Ball : MonoBehaviour {
-    public Text velTxt;
-    public Text magTxt;
-    public Text magLossTxt;
-
     public GameObject aim;
     public GameObject power;
-
 
     public int maxPower = 50;
     public int minPower = 1;
@@ -18,7 +13,6 @@ public class Ball : MonoBehaviour {
     public GameObject scoreBoardStrokeUi;
     public GameObject scoreboardNameUi;
     public int playerId;
-
 
     private int m_lockPos = 0;
     private int m_angle;
@@ -28,6 +22,9 @@ public class Ball : MonoBehaviour {
     public string usrName;
     public Color playerColour;
     private int strokeCount = 0;
+
+    [SerializeField]
+    private LevelController m_lvlController;
 
     //Used to control respawning
     private bool m_outOfBounds = false;
@@ -41,15 +38,20 @@ public class Ball : MonoBehaviour {
 
     private float magLosStore = 0;
 
+    private Vector3 m_start;
+
 	//Use this for initialization
 	void Start () {
         m_rigid = this.GetComponent<Rigidbody>();
 
-        oobTimeout = GameObject.Find("MinigameManager").GetComponent<BallControl>().outOfBoundsTimeout;
+        GameObject minigameManager = GameObject.Find("MinigameManager");
+
+        m_lvlController = minigameManager.GetComponent<LevelController>();
+
+        oobTimeout = minigameManager.GetComponent<BallControl>().outOfBoundsTimeout;
 
         ScalePower();
  
-
         //Generate a colour for the player
         playerColour = GameObject.Find("UiManager").GetComponent<UiController>().ColorFromUsername(usrName);
 
@@ -58,11 +60,15 @@ public class Ball : MonoBehaviour {
         uiManager.GetComponent<UiController>().AddToScoreboard(usrName, this.gameObject);
         uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
 
-     }
+    }
 
-	
-	// Update is called once per frame
-	void Update () {
+    private void Awake()
+    {
+        m_start = transform.position;
+    }
+
+    // Update is called once per frame
+    void Update () {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
 
         if(m_rigid.velocity.magnitude < 0.3f)
@@ -96,7 +102,42 @@ public class Ball : MonoBehaviour {
         //Ball is touching a playable area of the course - deemed in bounds.
         if(coll.gameObject.tag == "GolfCourse")
         {
-            m_outOfBounds = false;
+            bool foundLevel = false;
+            GameObject parent = coll.transform.parent.gameObject;
+
+            //Goes through all parents until the course is found or no more parents exist
+            while (parent != null && !foundLevel)
+            {
+                //Compares the parent to the current level
+                if (parent == m_lvlController.CurrentCourse)
+                {
+                    Debug.Log("Correct Course");
+                    foundLevel = true;
+                }
+                else { 
+                    //Attempt to get the next parent
+                    try
+                    {
+                        parent = parent.transform.parent.gameObject;
+                    }
+                    catch
+                    {
+                        parent = null;
+                    }
+                }
+            }
+
+            if (foundLevel)
+            {
+                m_outOfBounds = false;
+            }
+            else
+            {
+                //Respawns the player
+                Debug.Log("Wrong Course");
+                Respawn(m_lastPosition);
+                m_outOfBounds = true;
+            }
         }
     }
     private void OnCollisionStay(Collision other)
@@ -206,9 +247,11 @@ public class Ball : MonoBehaviour {
             {
                 int angVal = int.Parse(cmd[1]);
 
-                if (angVal >= 0 || angVal <= 360) //Checks if the angle is valid
+                //Checks if the angle is valid
+                if (angVal >= 0 || angVal <= 360) 
                 {
-                    m_angle = angVal; //Stores the angle
+                    //Stores the angle
+                    m_angle = angVal; 
                 }
             }
             catch { }
@@ -220,6 +263,7 @@ public class Ball : MonoBehaviour {
             {
                 int adjVal = int.Parse(cmd[1]) + m_angle;
 
+                //Limits max and min angle
                 if (adjVal > 360)
                 {
                     adjVal -= 360;
@@ -242,7 +286,8 @@ public class Ball : MonoBehaviour {
             {
                 float pwVal = float.Parse(cmd[1]);
 
-                if (pwVal >= minPower && pwVal <= maxPower) //Checks if the angle is valid
+                //Checks if the angle is valid
+                if (pwVal >= minPower && pwVal <= maxPower) 
                 {
                     m_power = pwVal;                    
                 }
@@ -253,12 +298,17 @@ public class Ball : MonoBehaviour {
                 }
                 if (pwVal < minPower)
                 {
-                    m_power = minPower;                    
+                    m_power = minPower;
                 }
 
                 ScalePower();
             }
             catch { }
+        }
+
+        if (cmd[0].ToLower() == "!reset")
+        {
+            this.transform.position = m_start;
         }
     }
 }
