@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Unity Project/MinigamesOnTwitch/Assets/Scenes/Mechanic Testing/LevelObjectives.unity.meta
 guid: a8622ade5926e4b4190475ac01a32cde
 timeCreated: 1523825525
+=======
+guid: 6ad556c412d9df5489ce9b419ca0b017
+folderAsset: yes
+timeCreated: 1523832141
+>>>>>>> feature/ui:Unity Project/MinigamesOnTwitch/Assets/Assets/Fonts.meta
 licenseType: Free
 DefaultImporter:
+  externalObjects: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
