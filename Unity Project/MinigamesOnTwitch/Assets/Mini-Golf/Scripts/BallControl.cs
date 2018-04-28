@@ -19,7 +19,7 @@ public class BallControl : MonoBehaviour
 
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
 
-    private StringSplitter m_Splitter;
+    private StringSplitter m_Splitter; 
     private GameJoin m_playerList;
 
     private GameObject[] m_playerBalls;
@@ -29,10 +29,13 @@ public class BallControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //Creates responses for imputs
+        
+
         m_IRC = this.GetComponent<TwitchIRC>();
         m_IRC.messageRecievedEvent.AddListener(OnChatMsgRecieved);
 
-        m_Splitter = this.GetComponent<StringSplitter>();
+        m_Splitter = new StringSplitter();
         m_playerList = this.GetComponent<GameJoin>();
 
         m_playerBalls = new GameObject[m_playerList.MaxPlayers];
@@ -40,7 +43,6 @@ public class BallControl : MonoBehaviour
         m_levelControl = this.GetComponent<LevelController>();
         m_levelControl.Init(m_playerList.playerCount);
 
-        
         for (int i = 0; i < m_playerList.MaxPlayers; i++)
         {
             //Creates and set ups all balls
@@ -57,7 +59,6 @@ public class BallControl : MonoBehaviour
                 catch { }
             }
         }
-        
     }
 
     void OnChatMsgRecieved(string msg)
@@ -88,9 +89,9 @@ public class BallControl : MonoBehaviour
 
             //Runs ball commands for the player
             string response = m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
-
+            
             if (response != null)
-                m_IRC.SendMsg(response); 
+                m_IRC.SendMsg(response);
 
             //Assign Player name
             m_playerBalls[player].GetComponent<Ball>().usrName = user;

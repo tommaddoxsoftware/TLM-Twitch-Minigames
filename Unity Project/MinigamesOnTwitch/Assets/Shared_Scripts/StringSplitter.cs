@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StringSplitter : MonoBehaviour {
+public class StringSplitter {
 
     public string[] Splitter(string str, char split)
     {
