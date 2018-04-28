@@ -16,6 +16,8 @@ public class BallControl : MonoBehaviour
 
     private TwitchIRC m_IRC;
     private LevelController m_levelControl;
+    private MinigolfBotReplys m_twitchBot; 
+
 
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
 
@@ -29,13 +31,15 @@ public class BallControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        //Creates responses for imputs
-        
-
+        //Gets the Twitch IRC
         m_IRC = this.GetComponent<TwitchIRC>();
         m_IRC.messageRecievedEvent.AddListener(OnChatMsgRecieved);
 
+        //Creates responses for imputs
+        m_twitchBot = new MinigolfBotReplys(m_IRC, m_playerList);
+
         m_Splitter = new StringSplitter();
+
         m_playerList = this.GetComponent<GameJoin>();
 
         m_playerBalls = new GameObject[m_playerList.MaxPlayers];
@@ -88,11 +92,10 @@ public class BallControl : MonoBehaviour
             //ball.Command(msgArray); //Runs ball commands
 
             //Runs ball commands for the player
-            string response = m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
-            
-            if (response != null)
-                m_IRC.SendMsg(response);
+            m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
 
+            m_twitchBot.ProcessCommand(user, msgArray);
+            
             //Assign Player name
             m_playerBalls[player].GetComponent<Ball>().usrName = user;
         }
