@@ -93,7 +93,18 @@ public class MinigolfBotReplys
                 case "!reset":
                     response += "reseting ball to start ";
                     break;
+                
             }
+        }
+
+        if (messages[0].ToLower() == "!commands")
+        {
+            //Message for each line because no new line exists
+            m_irc.SendMsg("!hit: propells the ball forward");
+            m_irc.SendMsg("!angle or !an: sets the angle of the ball relative to up");
+            m_irc.SendMsg("!adjust or !ad: adjusts the angle of the ball relative to its current angle");
+            m_irc.SendMsg("!power or !pow: sets the power of the ball");
+            m_irc.SendMsg("!reset: resets you ball back to the beginning of the course");
         }
 
         //Sends a the message to the Twitch chat
