@@ -9,7 +9,8 @@ public class LevelController : MonoBehaviour
     public GameObject[] levels;
 
     //Private
-    private GameObject[,] m_objectives;
+    private GameObject[] m_starts;
+    private GameObject[] m_ends;
 
     private BallControl m_ballControl;
 
@@ -17,22 +18,43 @@ public class LevelController : MonoBehaviour
 
     private int m_level;
 
+    [Tooltip("Customisable name for start point")]
+    [SerializeField]
+    private string m_startName = "Start";
+
+    [Tooltip ("Customisable name for end point")]
+    [SerializeField]
+    private string m_endName = "End";
+
+
     // Use this for initialization
     void Start()
     {
-        m_ballControl = this.GetComponent<BallControl>(); //Finds the ball controller
+        //Gets the ball controller
+        m_ballControl = this.GetComponent<BallControl>(); 
 
         m_level = 0; //Starts the level at level 1
 
-        m_objectives = new GameObject[levels.Length, 2]; //Sets up the array for the start and finish  
-                                                            //[level,0] start | [level,1] end
+        m_starts = new GameObject[levels.Length];
+        m_ends = new GameObject[levels.Length];
 
         //Finds the start and finish for all levels 
         for (int i = 0; i < levels.Length; i++)
         {
-            m_objectives[i, 0] = levels[i].transform.Find("Start").gameObject;
-            m_objectives[i, 1] = levels[i].transform.Find("End").gameObject;
+
+            //Finds the start and ends
+            m_starts[i] = levels[i].transform.Find("START").gameObject;
+            m_ends[i] = levels[i].transform.Find("END").gameObject;
+            
+            //Disables objectives
+            m_starts[i].SetActive(false);
+            m_ends[i].SetActive(false);
+
         }
+
+        //Activates starting level
+        m_starts[0].SetActive(true);
+        m_ends[0].SetActive(true);
     }
 
     // Update is called once per frame
@@ -46,11 +68,13 @@ public class LevelController : MonoBehaviour
 
     public bool CheckAllFinished()
     {
-        List<int> playingPlayers = this.GetComponent<GameJoin>().GetActivePlayers(); //Gets the active players indexes
+        //Gets the active players indexes
+        List<int> playingPlayers = this.GetComponent<GameJoin>().GetActivePlayers(); 
 
         for (int i = 0; i < playingPlayers.Count; i++)
         {
-            if (!m_playerState[playingPlayers[i]]) //Checks if that player has finnished
+            //Checks if that player has finnished
+            if (!m_playerState[playingPlayers[i]]) 
             {
                 return false;
             }
@@ -68,8 +92,11 @@ public class LevelController : MonoBehaviour
         //If the object isnt a ball do nothing
         if (ballIndex != -1)
         {
-            m_playerState[ballIndex] = true; //Changes the balls state
-            m_ballControl.HideBall(ballIndex); //Hides the ball
+            //Changes the balls state
+            m_playerState[ballIndex] = true; 
+
+            //Hides the ball
+            m_ballControl.HideBall(ballIndex); 
 
             //Checks to see that all balls have finished
             if (CheckAllFinished())
@@ -77,14 +104,32 @@ public class LevelController : MonoBehaviour
                 //Stops the game from going over the number of holes
                 if (m_level < levels.Length - 1)
                 {
-                    m_level++; //Increases the level
+                    //Deactivates the level that was just done
+                    m_starts[m_level].SetActive(false);
+                    m_ends[m_level].SetActive(false);
+
+                    //Increases the level
+                    m_level++;
+
+                    //Activates the next level
+                    m_starts[m_level].SetActive(true);
+                    m_ends[m_level].SetActive(true);
                 }
                 else
                 {
                     //##CODE FOR END GAME##
+                    //Temp code repeats level
+                    m_starts[m_level].SetActive(false);
+                    m_ends[m_level].SetActive(false);
+
+                    m_level = 0;
+
+                    m_starts[m_level].SetActive(true);
+                    m_ends[m_level].SetActive(true);
                 }
 
-                m_ballControl.MoveBalls(); //Move the balls to the new start point
+                //Move the balls to the new start point
+                m_ballControl.MoveBalls(); 
 
                 ResetBallState(); 
             }
@@ -109,6 +154,11 @@ public class LevelController : MonoBehaviour
     //Gives the position of the current levels start point
     public Vector3 StartPos
     {
-        get { return m_objectives[m_level, 0].transform.position; }
+        get { return m_starts[m_level].transform.position; }
+    }
+
+    public GameObject CurrentCourse
+    {
+        get { return levels[m_level]; }
     }
 }
