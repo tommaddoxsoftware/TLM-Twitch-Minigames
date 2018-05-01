@@ -15,16 +15,18 @@ public class MinigolfBotReplys
 
     public void ProcessCommand(string user, string[] messages)
     {
-        //Replys the the user
-        string response = user + " ";
-
         //Loops through all commands submited by the user
         for (int i = 0; i < messages.Length; i++)
         {
+            //Replys the the user
+            string response = user + " ";
+
             switch (messages[i].ToLower())
             {
                 case "!hit":
                     response += "hit the ball ";
+                    m_irc.SendMsg(response);
+
                     break;
                 case "!an":
                 case "!angle":
@@ -47,6 +49,7 @@ public class MinigolfBotReplys
                         response += "invalid angle value";
                     }
                     response += " ";
+                    m_irc.SendMsg(response);
 
                     break;
                 case "!ad":
@@ -65,7 +68,8 @@ public class MinigolfBotReplys
                         response += "invalid adjustment value";
                     }
                     response += " ";
-                    
+                    m_irc.SendMsg(response);
+
                     break;
                 case "!pwr":
                 case "!power":
@@ -88,12 +92,14 @@ public class MinigolfBotReplys
                         response += "invalid power value";
                     }
                     response += " ";
+                    m_irc.SendMsg(response);
 
                     break;
                 case "!reset":
                     response += "reseting ball to start ";
+                    m_irc.SendMsg(response);
+
                     break;
-                
             }
         }
 
@@ -108,6 +114,6 @@ public class MinigolfBotReplys
         }
 
         //Sends a the message to the Twitch chat
-        m_irc.SendMsg(response);
+        
     }
 }
