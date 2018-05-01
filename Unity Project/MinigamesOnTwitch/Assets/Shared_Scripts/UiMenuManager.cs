@@ -22,15 +22,15 @@ public class UiMenuManager : MonoBehaviour {
 
         //Set Max Players
         if (PlayerPrefs.HasKey("MaxPlayers"))
+        {
             maxPlayerLbl.text = PlayerPrefs.GetInt("MaxPlayers").ToString();
+            maxPlayerSlider.value = PlayerPrefs.GetInt("MaxPlayers");
+        }
         else
         {
             maxPlayerLbl.text = "1";
             PlayerPrefs.SetInt("MaxPlayers", 1);
         }
-        
-
-
 
         if (PlayerPrefs.HasKey("TwitchUsr"))
             usernameInput.text = PlayerPrefs.GetString("TwitchUsr");
