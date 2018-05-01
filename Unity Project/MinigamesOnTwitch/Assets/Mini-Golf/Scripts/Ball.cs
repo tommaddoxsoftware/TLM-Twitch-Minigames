@@ -145,8 +145,9 @@ public class Ball : MonoBehaviour {
         //Make sure the ball has remained in bounds.
         if (other.gameObject.tag == "GolfCourse")
         {
-            //Debug.Log("In bounds");
+            //Reset Out Of Bounds timer
             m_outOfBounds = false;
+            StopCoroutine("OutOfBoundsTimer");
         }
     }
 
