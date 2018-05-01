@@ -28,9 +28,6 @@ public class UiMenuManager : MonoBehaviour {
             maxPlayerLbl.text = "1";
             PlayerPrefs.SetInt("MaxPlayers", 1);
         }
-        
-
-
 
         if (PlayerPrefs.HasKey("TwitchUsr"))
             usernameInput.text = PlayerPrefs.GetString("TwitchUsr");
@@ -39,21 +36,25 @@ public class UiMenuManager : MonoBehaviour {
 
     }
     
+    //Button Press - gets OAuth URL for user
     public void GetTwitchAuth()
     {
         Application.OpenURL("https://twitchapps.com/tmi/");
     }
 
+    //Set username input field based on playerprefs
     private void SetUsername(InputField usr)
     {
         PlayerPrefs.SetString("TwitchUsr", usr.text);
     }
-    
+
+    //Set OAuth input field based on playerprefs  
     private void SetOAuth(InputField auth)
     {
         PlayerPrefs.SetString("TwitchAuth", auth.text);
     }
 
+    //Set Max Player slider value based on playerprefs
     private void SetMaxPlayers(Slider maxPlayers)
     {
         PlayerPrefs.SetInt("MaxPlayers", (int) maxPlayers.value);
