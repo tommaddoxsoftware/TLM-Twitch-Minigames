@@ -72,8 +72,9 @@ public class Ball : MonoBehaviour {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
 
         if(m_rigid.velocity.magnitude < 0.3f)
-        {
-            StopBall();
+        {   
+            // Commentted out by Luke as this was causing ball to not move when "!hit" is used
+            //StopBall();
         }
 
         //Calculates the delta magnatude
@@ -82,7 +83,8 @@ public class Ball : MonoBehaviour {
         //Checks if the ball is in motion and the delta magnitude
         if (m_inMotion && magLoss < 0.02)
         {
-            StopBall();
+            // Commentted out by Luke as this was causing ball to not move when "!hit" is used
+            //StopBall();
         }
     }
 
