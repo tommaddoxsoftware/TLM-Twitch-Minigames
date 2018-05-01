@@ -203,12 +203,12 @@ public class Ball : MonoBehaviour {
         power.transform.localPosition = new Vector3(0, 0, 0.9f + (altLenght / 2));
     }
 
-    public void Command(string[] cmd)
+    public void Command(string[] cmd, string user)
     {
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
         {
-            
+          
             if (m_rigid.velocity == Vector3.zero)
             {
                 //Store the transform (so we can access the position) before we fire the ball
@@ -230,7 +230,6 @@ public class Ball : MonoBehaviour {
                 /*****************/
                 //Store each player's score per course
                 //Only display score per course
-
             }
         }
 
@@ -248,10 +247,10 @@ public class Ball : MonoBehaviour {
                 int angVal = int.Parse(cmd[1]);
 
                 //Checks if the angle is valid
-                if (angVal >= 0 || angVal <= 360) 
+                if (angVal >= 0 || angVal <= 360)
                 {
                     //Stores the angle
-                    m_angle = angVal; 
+                    m_angle = angVal;
                 }
             }
             catch { }
@@ -289,12 +288,12 @@ public class Ball : MonoBehaviour {
                 //Checks if the angle is valid
                 if (pwVal >= minPower && pwVal <= maxPower) 
                 {
-                    m_power = pwVal;                    
+                    m_power = pwVal;
                 }
                 if(pwVal > maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
-                    m_power = maxPower; 
+                    m_power = maxPower;
                 }
                 if (pwVal < minPower)
                 {

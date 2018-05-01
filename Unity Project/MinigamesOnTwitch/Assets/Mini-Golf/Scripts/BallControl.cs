@@ -16,10 +16,12 @@ public class BallControl : MonoBehaviour
 
     private TwitchIRC m_IRC;
     private LevelController m_levelControl;
+    private MinigolfBotReplys m_twitchBot; 
+
 
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
 
-    private StringSplitter m_Splitter;
+    private StringSplitter m_Splitter; 
     private GameJoin m_playerList;
 
     private GameObject[] m_playerBalls;
@@ -29,10 +31,15 @@ public class BallControl : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        //Gets the Twitch IRC
         m_IRC = this.GetComponent<TwitchIRC>();
         m_IRC.messageRecievedEvent.AddListener(OnChatMsgRecieved);
 
-        m_Splitter = this.GetComponent<StringSplitter>();
+        //Creates responses for imputs
+        m_twitchBot = new MinigolfBotReplys(m_IRC);
+
+        m_Splitter = new StringSplitter();
+
         m_playerList = this.GetComponent<GameJoin>();
 
         m_playerBalls = new GameObject[m_playerList.MaxPlayers];
@@ -40,7 +47,6 @@ public class BallControl : MonoBehaviour
         m_levelControl = this.GetComponent<LevelController>();
         m_levelControl.Init(m_playerList.playerCount);
 
-        
         for (int i = 0; i < m_playerList.MaxPlayers; i++)
         {
             //Creates and set ups all balls
@@ -57,7 +63,6 @@ public class BallControl : MonoBehaviour
                 catch { }
             }
         }
-        
     }
 
     void OnChatMsgRecieved(string msg)
@@ -86,8 +91,11 @@ public class BallControl : MonoBehaviour
         {
             //ball.Command(msgArray); //Runs ball commands
 
-            m_playerBalls[player].GetComponent<Ball>().Command(msgArray); //Runs ball commands for the player
+            //Runs ball commands for the player
+            m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
 
+            m_twitchBot.ProcessCommand(user, msgArray);
+            
             //Assign Player name
             m_playerBalls[player].GetComponent<Ball>().usrName = user;
         }
@@ -134,8 +142,6 @@ public class BallControl : MonoBehaviour
         CreateBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         ResetBall(index);
-
-        
     }
 
     public void PlayerLeft(int index)
