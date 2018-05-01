@@ -71,10 +71,9 @@ public class Ball : MonoBehaviour {
     void Update () {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
 
-        if(m_rigid.velocity.magnitude < 0.3f)
+        if(m_rigid.velocity.magnitude < 0.3f && m_inMotion)
         {   
-            // Commentted out by Luke as this was causing ball to not move when "!hit" is used
-            //StopBall();
+            StopBall();
         }
 
         //Calculates the delta magnatude
@@ -83,8 +82,7 @@ public class Ball : MonoBehaviour {
         //Checks if the ball is in motion and the delta magnitude
         if (m_inMotion && magLoss < 0.02)
         {
-            // Commentted out by Luke as this was causing ball to not move when "!hit" is used
-            //StopBall();
+            StopBall();
         }
     }
 
@@ -183,9 +181,13 @@ public class Ball : MonoBehaviour {
     public void StopBall()
     {
         this.transform.GetChild(0).gameObject.SetActive(true);
+        /*
         m_rigid.isKinematic = true;
         m_rigid.isKinematic = false;
+        */
+        m_rigid.drag = 10.0f;
         m_inMotion = false;
+  
     }
 
     //Resets the balls angle and power to 0
@@ -212,8 +214,9 @@ public class Ball : MonoBehaviour {
         if (cmd[0].ToLower() == "!hit")
         {
           
-            if (m_rigid.velocity == Vector3.zero)
+            if (!m_inMotion)
             {
+                m_rigid.drag = 0.8f;
                 //Store the transform (so we can access the position) before we fire the ball
                 m_lastPosition = gameObject.transform.position;
 
