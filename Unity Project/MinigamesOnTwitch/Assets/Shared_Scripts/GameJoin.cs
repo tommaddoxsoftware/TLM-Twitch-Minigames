@@ -126,7 +126,7 @@ public class GameJoin : MonoBehaviour
         //Sends messages to minigame controllers to say that a player has joined
         try
         {
-            this.GetComponent<BallControl>().PlayerJoined(index); //MiniGolf
+            this.GetComponent<MinigolfController>().PlayerJoined(index); //MiniGolf
         }
         catch { }
     }
@@ -137,7 +137,7 @@ public class GameJoin : MonoBehaviour
         try
         {
             //MiniGolf
-            this.GetComponent<BallControl>().PlayerLeft(index); 
+            this.GetComponent<MinigolfController>().PlayerLeft(index); 
         }
         catch { }
     }

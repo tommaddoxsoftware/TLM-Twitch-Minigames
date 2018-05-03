@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(GameJoin))]
-public class BallControl : MonoBehaviour
+public class MinigolfController : MonoBehaviour
 {
     public int maxMessages = 100;
 

@@ -48,7 +48,7 @@ public class Ball : MonoBehaviour {
 
         m_lvlController = minigameManager.GetComponent<LevelController>();
 
-        oobTimeout = minigameManager.GetComponent<BallControl>().outOfBoundsTimeout;
+        oobTimeout = minigameManager.GetComponent<MinigolfController>().outOfBoundsTimeout;
 
         ScalePower();
  
