@@ -168,6 +168,8 @@ public class MinigolfController : MonoBehaviour
             //Move the ball to the new start location
             m_playerBalls[activePlayers[i]].transform.position = m_levelControl.StartPos; 
             m_playerBalls[activePlayers[i]].GetComponent<Ball>().StopBall();
+
+            m_playerBalls[activePlayers[i]].GetComponent<Ball>().ResetBallAdjustments();
         }
     }
 }
