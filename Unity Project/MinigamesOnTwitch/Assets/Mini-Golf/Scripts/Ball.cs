@@ -214,7 +214,7 @@ public class Ball : MonoBehaviour {
         if (cmd[0].ToLower() == "!hit")
         {
           
-            if (!m_inMotion)
+            if (!m_inMotion && m_rigid.velocity == new Vector3(0,0,0))
             {
                 m_rigid.drag = 0.8f;
                 //Store the transform (so we can access the position) before we fire the ball
