@@ -47,6 +47,7 @@ public class Ball : MonoBehaviour {
         GameObject minigameManager = GameObject.Find("MinigameManager");
 
         m_lvlController = minigameManager.GetComponent<LevelController>();
+        m_start = m_lvlController.StartPos;
 
         oobTimeout = minigameManager.GetComponent<MinigolfController>().outOfBoundsTimeout;
 
@@ -62,14 +63,20 @@ public class Ball : MonoBehaviour {
 
     }
 
-    private void Awake()
+    private void OnEnable()
     {
-        m_start = transform.position;
+        try
+        {
+            m_start = m_lvlController.StartPos;
+        }
+        catch { }
     }
 
     // Update is called once per frame
     void Update () {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
+        //Locks the Aim and power from rotating
+        this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); 
 
         if(m_rigid.velocity.magnitude < 0.3f && m_inMotion)
         {   
