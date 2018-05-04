@@ -46,6 +46,7 @@ public class UiMenuManager : MonoBehaviour {
     private void SetUsername(InputField usr)
     {
         PlayerPrefs.SetString("TwitchUsr", usr.text);
+        PlayerPrefs.SetString("BotUsr", usr.text);
     }
 
     //Set OAuth input field based on playerprefs  
