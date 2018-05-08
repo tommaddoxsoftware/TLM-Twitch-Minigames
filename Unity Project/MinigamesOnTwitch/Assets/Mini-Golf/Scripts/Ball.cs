@@ -10,6 +10,8 @@ public class Ball : MonoBehaviour {
     public int maxPower = 50;
     public int minPower = 1;
 
+    public int aimTimer = 3;
+
     public GameObject scoreBoardStrokeUi;
     public GameObject scoreboardNameUi;
     public int playerId;
@@ -207,13 +209,24 @@ public class Ball : MonoBehaviour {
 
     private void ScalePower()
     {
+        power.SetActive(true);
+        StopCoroutine("HideIndicator");
         //Calculates a modified length so that the power indicator isn't massive
         float altLenght = m_power / 6;
 
         //Scale the angle and power indicator appropriately
         power.transform.localScale = new Vector3(0.2f, 0.06f, 2 + altLenght);
         power.transform.localPosition = new Vector3(0, 0, 0.9f + (altLenght / 2));
+
+        StartCoroutine("HideIndicator");
     }
+
+    IEnumerator HideIndicator()
+    {
+        yield return new WaitForSeconds(aimTimer);
+        power.SetActive(false);
+    }
+
 
     public void Command(string[] cmd, string user)
     {
@@ -264,6 +277,7 @@ public class Ball : MonoBehaviour {
                 {
                     //Stores the angle
                     m_angle = angVal;
+                    ScalePower();
                 }
             }
             catch { }
@@ -286,6 +300,7 @@ public class Ball : MonoBehaviour {
                 }
 
                 m_angle = adjVal;
+                ScalePower();
             }
         
         catch { }
