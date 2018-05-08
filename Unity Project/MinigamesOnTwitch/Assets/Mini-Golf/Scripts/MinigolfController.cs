@@ -8,6 +8,9 @@ public class MinigolfController : MonoBehaviour
 {
     public int maxMessages = 100;
 
+    public int maxPower = 100;
+    public int minPower = 1;
+
     public Ball ball;
 
     public GameObject ballPrefab;
@@ -35,7 +38,7 @@ public class MinigolfController : MonoBehaviour
         m_IRC.messageRecievedEvent.AddListener(OnChatMsgRecieved);
 
         //Creates responses for imputs
-        m_twitchBot = new MinigolfBotReplys(m_IRC);
+        m_twitchBot = new MinigolfBotReplys(m_IRC, maxPower);
 
         m_Splitter = new StringSplitter();
 
@@ -51,12 +54,16 @@ public class MinigolfController : MonoBehaviour
             //Creates and set ups all balls
             m_playerBalls[i] = Instantiate(ballPrefab);
             m_playerBalls[i].SetActive(false);
+            //Sets the maximum for the balls
+            m_playerBalls[i].GetComponent<Ball>().MaxPower = maxPower;
+            m_playerBalls[i].GetComponent<Ball>().MinPower = minPower;
 
             for (int j = 0; j < m_playerBalls.Length; j++)
             {
                 try
                 {
-                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); //Prevents balls from colleding when instantiating
+                    //Prevents balls from colleding when instantiating
+                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); 
                 }
                 catch { }
             }

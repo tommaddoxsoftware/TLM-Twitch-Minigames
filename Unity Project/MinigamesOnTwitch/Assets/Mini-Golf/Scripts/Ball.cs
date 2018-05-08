@@ -7,8 +7,8 @@ public class Ball : MonoBehaviour {
     public GameObject aim;
     public GameObject power;
 
-    public int maxPower = 50;
-    public int minPower = 1;
+    private int m_maxPower = 100;
+    private int m_minPower = 1;
 
     public int aimTimer = 3;
 
@@ -42,8 +42,8 @@ public class Ball : MonoBehaviour {
 
     private Vector3 m_start;
 
-	//Use this for initialization
-	void Start () {
+    //Use this for initialization
+    void Start() {
         m_rigid = this.GetComponent<Rigidbody>();
 
         GameObject minigameManager = GameObject.Find("MinigameManager");
@@ -54,14 +54,14 @@ public class Ball : MonoBehaviour {
         oobTimeout = minigameManager.GetComponent<MinigolfController>().outOfBoundsTimeout;
 
         ScalePower();
- 
+
         //Generate a colour for the player
         playerColour = GameObject.Find("UiManager").GetComponent<UiController>().ColorFromUsername(usrName);
 
         //Once we have a colour, add them to the scoreboard UI, and set the ball UI (Their username)
         GameObject uiManager = GameObject.Find("UiManager");
         uiManager.GetComponent<UiController>().AddToScoreboard(usrName, this.gameObject);
-        uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
+        uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName);
 
     }
 
@@ -75,13 +75,13 @@ public class Ball : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
         //Locks the Aim and power from rotating
-        this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); 
+        this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos);
 
-        if(m_rigid.velocity.magnitude < 0.3f && m_inMotion)
-        {   
+        if (m_rigid.velocity.magnitude < 0.3f && m_inMotion)
+        {
             StopBall();
         }
 
@@ -99,17 +99,17 @@ public class Ball : MonoBehaviour {
     {
         //Player is now out of bounds / has left one collider and hit another. 
         //Start coroutine, if still out of bounds, respawn them
-        if(coll.gameObject.tag == "GolfCourse")
+        if (coll.gameObject.tag == "GolfCourse")
         {
             m_outOfBounds = true;
             //Debug.Log("Player left bounds!");
             StartCoroutine("OutOfBoundsTimer");
-        }   
+        }
     }
     private void OnCollisionEnter(Collision coll)
     {
         //Ball is touching a playable area of the course - deemed in bounds.
-        if(coll.gameObject.tag == "GolfCourse")
+        if (coll.gameObject.tag == "GolfCourse")
         {
             bool foundLevel = false;
             GameObject parent = coll.transform.parent.gameObject;
@@ -123,7 +123,7 @@ public class Ball : MonoBehaviour {
                     Debug.Log("Correct Course");
                     foundLevel = true;
                 }
-                else { 
+                else {
                     //Attempt to get the next parent
                     try
                     {
@@ -164,8 +164,8 @@ public class Ball : MonoBehaviour {
     {
         //Wait for 3 seconds - then perform an OutOfBounds check. This value should probably be set via an editor value
         yield return new WaitForSeconds(oobTimeout);
-        if(m_outOfBounds)
-        {            
+        if (m_outOfBounds)
+        {
             Respawn(m_lastPosition);
         }
 
@@ -196,7 +196,7 @@ public class Ball : MonoBehaviour {
         */
         m_rigid.drag = 10.0f;
         m_inMotion = false;
-  
+
     }
 
     //Resets the balls angle and power to 0
@@ -233,7 +233,7 @@ public class Ball : MonoBehaviour {
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
         {
-          
+
             if (!m_inMotion)
             {
                 m_rigid.drag = 0.8f;
@@ -302,8 +302,8 @@ public class Ball : MonoBehaviour {
                 m_angle = adjVal;
                 ScalePower();
             }
-        
-        catch { }
+
+            catch { }
         }
 
         //Sets the angle of the ball
@@ -314,18 +314,18 @@ public class Ball : MonoBehaviour {
                 float pwVal = float.Parse(cmd[1]);
 
                 //Checks if the angle is valid
-                if (pwVal >= minPower && pwVal <= maxPower) 
+                if (pwVal >= m_minPower && pwVal <= m_maxPower)
                 {
                     m_power = pwVal;
                 }
-                if(pwVal > maxPower)
+                if (pwVal > m_maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
-                    m_power = maxPower;
+                    m_power = m_maxPower;
                 }
-                if (pwVal < minPower)
+                if (pwVal < m_minPower)
                 {
-                    m_power = minPower;
+                    m_power = m_minPower;
                 }
 
                 ScalePower();
@@ -337,5 +337,14 @@ public class Ball : MonoBehaviour {
         {
             this.transform.position = m_start;
         }
+    }
+
+    public int MaxPower {
+        set { m_maxPower = value; }
+    }
+
+    public int MinPower
+    {
+        set { m_minPower = value; }
     }
 }
