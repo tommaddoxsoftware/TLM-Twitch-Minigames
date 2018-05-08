@@ -4,13 +4,16 @@ using UnityEngine;
 
 public class MinigolfBotReplys
 {
+    private int m_maxPower;
+
     private StringSplitter m_splitter;
     private TwitchIRC m_irc;
 
-    public MinigolfBotReplys(TwitchIRC irc)
+    public MinigolfBotReplys(TwitchIRC irc, int maxPower)
     {
         m_splitter = new StringSplitter();
         m_irc = irc;
+        m_maxPower = maxPower;
     }
 
     public void ProcessCommand(string user, string[] messages)
@@ -77,8 +80,8 @@ public class MinigolfBotReplys
                     {
                         int powVal = int.Parse(messages[i + 1]);
 
-                        if (powVal > 50)
-                            response += "value over max, setting to: 50";
+                        if (powVal > m_maxPower)
+                            response += "value over max, setting to: " + m_maxPower;
                         else if (powVal < 1)
                             response += "value under min, setting to: 1";
                         else
