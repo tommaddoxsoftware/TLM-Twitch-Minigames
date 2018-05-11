@@ -7,6 +7,8 @@ public class Ball : MonoBehaviour {
     public GameObject aim;
     public GameObject power;
 
+    private MinigolfBotReplys m_bot;
+
     private int m_maxPower = 100;
     private int m_minPower = 1;
 
@@ -230,6 +232,8 @@ public class Ball : MonoBehaviour {
 
     public void Command(string[] cmd, string user)
     {
+        m_bot.ProcessCommand(user, cmd);
+
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
         {
@@ -346,5 +350,10 @@ public class Ball : MonoBehaviour {
     public int MinPower
     {
         set { m_minPower = value; }
+    }
+
+    public MinigolfBotReplys Bot
+    {
+        set { m_bot = value; }
     }
 }

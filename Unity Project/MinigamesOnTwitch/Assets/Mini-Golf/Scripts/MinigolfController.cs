@@ -54,6 +54,10 @@ public class MinigolfController : MonoBehaviour
             //Creates and set ups all balls
             m_playerBalls[i] = Instantiate(ballPrefab);
             m_playerBalls[i].SetActive(false);
+
+            //Passes the bot to the balls
+            m_playerBalls[i].GetComponent<Ball>().Bot = m_twitchBot;
+
             //Sets the maximum for the balls
             m_playerBalls[i].GetComponent<Ball>().MaxPower = maxPower;
             m_playerBalls[i].GetComponent<Ball>().MinPower = minPower;
@@ -101,8 +105,6 @@ public class MinigolfController : MonoBehaviour
 
             //Runs ball commands for the player
             m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
-
-            m_twitchBot.ProcessCommand(user, msgArray);
             
             //Assign Player name
             m_playerBalls[player].GetComponent<Ball>().usrName = user;
