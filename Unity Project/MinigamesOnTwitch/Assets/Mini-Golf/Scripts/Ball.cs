@@ -120,7 +120,7 @@ public class Ball : MonoBehaviour {
             while (parent != null && !foundLevel)
             {
                 //Compares the parent to the current level
-                if (parent == m_lvlController.CurrentCourse)
+                if (parent == m_lvlController.CurrentCourseObject)
                 {
                     Debug.Log("Correct Course");
                     foundLevel = true;

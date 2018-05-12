@@ -157,8 +157,13 @@ public class LevelController : MonoBehaviour
         get { return m_starts[m_level].transform.position; }
     }
 
-    public GameObject CurrentCourse
+    public GameObject CurrentCourseObject
     {
         get { return levels[m_level]; }
+    }
+
+    public int CurrentCourse
+    {
+        get { return m_level; }
     }
 }
