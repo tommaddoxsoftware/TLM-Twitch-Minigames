@@ -232,7 +232,7 @@ public class Ball : MonoBehaviour {
 
     public void Command(string[] cmd, string user)
     {
-        m_bot.ProcessCommand(user, cmd);
+        //m_bot.ProcessCommand(user, cmd);
 
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
@@ -254,6 +254,9 @@ public class Ball : MonoBehaviour {
                 //Update scores
                 strokeCount++;
                 GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
+
+                //Sends message to the bot
+                m_bot.Hit(user);
 
                 /*******************/
                 /*     To Do:     */
@@ -277,12 +280,32 @@ public class Ball : MonoBehaviour {
                 int angVal = int.Parse(cmd[1]);
 
                 //Checks if the angle is valid
-                if (angVal >= 0 || angVal <= 360)
+                if (angVal >= 0 && angVal <= 360)
                 {
                     //Stores the angle
                     m_angle = angVal;
-                    ScalePower();
+
+                    //Sends message to the bot
+                    m_bot.Angle(user, m_angle);                    
                 }
+                else if (angVal > 360)
+                {
+                    //Stores the angle
+                    m_angle = 0;
+
+                    //Sends message to the bot
+                    m_bot.OverMaxAngle(user);
+                }
+                else if (angVal < 0)
+                {
+                    //Stores the angle
+                    m_angle = 0;
+
+                    //Sends message to the bot
+                    m_bot.UnderMinAngle(user);
+                }
+
+                ScalePower();
             }
             catch { }
         }
@@ -291,19 +314,27 @@ public class Ball : MonoBehaviour {
         {
             try
             {
-                int adjVal = int.Parse(cmd[1]) + m_angle;
+                int adjVal = int.Parse(cmd[1]);
 
+                int newAng = m_angle + adjVal;
+
+                /*
                 //Limits max and min angle
-                if (adjVal > 360)
+                if (newAng > 360)
                 {
-                    adjVal -= 360;
+                    newAng -= 360;
                 }
-                else if (adjVal < 0)
+                else if (newAng < 0)
                 {
-                    adjVal += 360;
+                    newAng += 360;
                 }
+                */
 
-                m_angle = adjVal;
+                m_angle += adjVal;
+
+                //Sends message to the bot
+                m_bot.Adjust(user, adjVal, m_angle);
+
                 ScalePower();
             }
 
@@ -321,15 +352,24 @@ public class Ball : MonoBehaviour {
                 if (pwVal >= m_minPower && pwVal <= m_maxPower)
                 {
                     m_power = pwVal;
+
+                    //Sends message to the bot
+                    m_bot.Power(user, m_power);
                 }
-                if (pwVal > m_maxPower)
+                else if (pwVal > m_maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
                     m_power = m_maxPower;
+
+                    //Sends message to the bot
+                    m_bot.OverMaxPower(user, m_maxPower);
                 }
-                if (pwVal < m_minPower)
+                else if(pwVal < m_minPower)
                 {
                     m_power = m_minPower;
+
+                    //Sends message to the bot
+                    m_bot.UnderMinPower(user, m_minPower);
                 }
 
                 ScalePower();
@@ -340,6 +380,15 @@ public class Ball : MonoBehaviour {
         if (cmd[0].ToLower() == "!reset")
         {
             this.transform.position = m_start;
+
+            //Sends message to the bot
+            m_bot.Reset(user);
+        }
+
+        if (cmd[0].ToLower() == "!commands")
+        {
+            //Sends message to the bot
+            m_bot.GolfCommands();
         }
     }
 
