@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(GameJoin))]
-public class BallControl : MonoBehaviour
+public class MinigolfController : MonoBehaviour
 {
     public int maxMessages = 100;
+
+    public int maxPower = 100;
+    public int minPower = 1;
 
     public Ball ball;
 
@@ -17,7 +20,6 @@ public class BallControl : MonoBehaviour
     private TwitchIRC m_IRC;
     private LevelController m_levelControl;
     private MinigolfBotReplys m_twitchBot; 
-
 
     private LinkedList<GameObject> m_messages = new LinkedList<GameObject>();
 
@@ -50,15 +52,22 @@ public class BallControl : MonoBehaviour
         for (int i = 0; i < m_playerList.MaxPlayers; i++)
         {
             //Creates and set ups all balls
-            //eateBall(i);
             m_playerBalls[i] = Instantiate(ballPrefab);
             m_playerBalls[i].SetActive(false);
+
+            //Passes the bot to the balls
+            m_playerBalls[i].GetComponent<Ball>().Bot = m_twitchBot;
+
+            //Sets the maximum for the balls
+            m_playerBalls[i].GetComponent<Ball>().MaxPower = maxPower;
+            m_playerBalls[i].GetComponent<Ball>().MinPower = minPower;
 
             for (int j = 0; j < m_playerBalls.Length; j++)
             {
                 try
                 {
-                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); //Prevents balls from colleding when instantiating
+                    //Prevents balls from colleding when instantiating
+                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); 
                 }
                 catch { }
             }
@@ -83,18 +92,19 @@ public class BallControl : MonoBehaviour
             m_messages.RemoveFirst();
         }
 
-        m_playerList.Commands(msgArray, user); //Joining commands
+        //Joining commands
+        m_playerList.Commands(msgArray, user); 
 
-        int player = m_playerList.CheckIfPlayer(user); //Gets the index of a player if they are in the game
+        //Gets the index of a player if they are in the game
+        int player = m_playerList.CheckIfPlayer(user); 
 
-        if (player != -1 && m_levelControl.PlayerState(player) == false) //Checks if the player has joined and that their ball is in play
+        //Checks if the player has joined and that their ball is in play
+        if (player != -1 && m_levelControl.PlayerState(player) == false) 
         {
             //ball.Command(msgArray); //Runs ball commands
 
             //Runs ball commands for the player
             m_playerBalls[player].GetComponent<Ball>().Command(msgArray, user);
-
-            m_twitchBot.ProcessCommand(user, msgArray);
             
             //Assign Player name
             m_playerBalls[player].GetComponent<Ball>().usrName = user;
@@ -120,11 +130,13 @@ public class BallControl : MonoBehaviour
         {
             if (ball == m_playerBalls[i])
             {
-                return i; //Rerturns the index of the ball
+                //Returns the index of the ball
+                return i; 
             }
         }
 
-        return -1; //Returns -1 if gameobject is not a ball
+        //Returns -1 if gameobject is not a ball
+        return -1; 
     }
 
     public void HideBall(int ballIndex)
@@ -154,11 +166,19 @@ public class BallControl : MonoBehaviour
 
     public void MoveBalls()
     {
-        for (int i = 0; i < m_playerBalls.Length; i++)
+        //Gets the current players
+        List<int> activePlayers = m_playerList.GetActivePlayers();
+
+        for (int i = 0; i < activePlayers.Count; i++)
         {
-            m_playerBalls[i].SetActive(true); //Shows the ball 
-            m_playerBalls[i].transform.position = m_levelControl.StartPos; //Move the ball to the new start location
-            m_playerBalls[i].GetComponent<Ball>().StopBall();
+            //Shows the ball 
+            m_playerBalls[activePlayers[i]].SetActive(true); 
+
+            //Move the ball to the new start location
+            m_playerBalls[activePlayers[i]].transform.position = m_levelControl.StartPos; 
+            m_playerBalls[activePlayers[i]].GetComponent<Ball>().StopBall();
+
+            m_playerBalls[activePlayers[i]].GetComponent<Ball>().ResetBallAdjustments();
         }
     }
 }

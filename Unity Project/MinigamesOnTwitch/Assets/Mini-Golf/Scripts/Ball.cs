@@ -7,8 +7,12 @@ public class Ball : MonoBehaviour {
     public GameObject aim;
     public GameObject power;
 
-    public int maxPower = 50;
-    public int minPower = 1;
+    private MinigolfBotReplys m_bot;
+
+    private int m_maxPower = 100;
+    private int m_minPower = 1;
+
+    public int aimTimer = 3;
 
     public GameObject scoreBoardStrokeUi;
     public GameObject scoreboardNameUi;
@@ -40,39 +44,46 @@ public class Ball : MonoBehaviour {
 
     private Vector3 m_start;
 
-	//Use this for initialization
-	void Start () {
+    //Use this for initialization
+    void Start() {
         m_rigid = this.GetComponent<Rigidbody>();
 
         GameObject minigameManager = GameObject.Find("MinigameManager");
 
         m_lvlController = minigameManager.GetComponent<LevelController>();
+        m_start = m_lvlController.StartPos;
 
-        oobTimeout = minigameManager.GetComponent<BallControl>().outOfBoundsTimeout;
+        oobTimeout = minigameManager.GetComponent<MinigolfController>().outOfBoundsTimeout;
 
         ScalePower();
- 
+
         //Generate a colour for the player
         playerColour = GameObject.Find("UiManager").GetComponent<UiController>().ColorFromUsername(usrName);
 
         //Once we have a colour, add them to the scoreboard UI, and set the ball UI (Their username)
         GameObject uiManager = GameObject.Find("UiManager");
         uiManager.GetComponent<UiController>().AddToScoreboard(usrName, this.gameObject);
-        uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName); 
+        uiManager.GetComponent<UiController>().UISetPlayerName(this.gameObject, usrName);
 
     }
 
-    private void Awake()
+    private void OnEnable()
     {
-        m_start = transform.position;
+        try
+        {
+            m_start = m_lvlController.StartPos;
+        }
+        catch { }
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
         this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos); //Locks the Aim and power from rotating
+        //Locks the Aim and power from rotating
+        this.transform.GetChild(0).rotation = Quaternion.Euler(m_lockPos, m_angle, m_lockPos);
 
-        if(m_rigid.velocity.magnitude < 0.3f && m_inMotion)
-        {   
+        if (m_rigid.velocity.magnitude < 0.3f && m_inMotion)
+        {
             StopBall();
         }
 
@@ -90,17 +101,17 @@ public class Ball : MonoBehaviour {
     {
         //Player is now out of bounds / has left one collider and hit another. 
         //Start coroutine, if still out of bounds, respawn them
-        if(coll.gameObject.tag == "GolfCourse")
+        if (coll.gameObject.tag == "GolfCourse")
         {
             m_outOfBounds = true;
             //Debug.Log("Player left bounds!");
             StartCoroutine("OutOfBoundsTimer");
-        }   
+        }
     }
     private void OnCollisionEnter(Collision coll)
     {
         //Ball is touching a playable area of the course - deemed in bounds.
-        if(coll.gameObject.tag == "GolfCourse")
+        if (coll.gameObject.tag == "GolfCourse")
         {
             bool foundLevel = false;
             GameObject parent = coll.transform.parent.gameObject;
@@ -109,12 +120,12 @@ public class Ball : MonoBehaviour {
             while (parent != null && !foundLevel)
             {
                 //Compares the parent to the current level
-                if (parent == m_lvlController.CurrentCourse)
+                if (parent == m_lvlController.CurrentCourseObject)
                 {
                     Debug.Log("Correct Course");
                     foundLevel = true;
                 }
-                else { 
+                else {
                     //Attempt to get the next parent
                     try
                     {
@@ -155,8 +166,8 @@ public class Ball : MonoBehaviour {
     {
         //Wait for 3 seconds - then perform an OutOfBounds check. This value should probably be set via an editor value
         yield return new WaitForSeconds(oobTimeout);
-        if(m_outOfBounds)
-        {            
+        if (m_outOfBounds)
+        {
             Respawn(m_lastPosition);
         }
 
@@ -187,7 +198,7 @@ public class Ball : MonoBehaviour {
         */
         m_rigid.drag = 10.0f;
         m_inMotion = false;
-  
+
     }
 
     //Resets the balls angle and power to 0
@@ -200,20 +211,33 @@ public class Ball : MonoBehaviour {
 
     private void ScalePower()
     {
+        power.SetActive(true);
+        StopCoroutine("HideIndicator");
         //Calculates a modified length so that the power indicator isn't massive
         float altLenght = m_power / 6;
 
         //Scale the angle and power indicator appropriately
         power.transform.localScale = new Vector3(0.2f, 0.06f, 2 + altLenght);
         power.transform.localPosition = new Vector3(0, 0, 0.9f + (altLenght / 2));
+
+        StartCoroutine("HideIndicator");
     }
+
+    IEnumerator HideIndicator()
+    {
+        yield return new WaitForSeconds(aimTimer);
+        power.SetActive(false);
+    }
+
 
     public void Command(string[] cmd, string user)
     {
+        //m_bot.ProcessCommand(user, cmd);
+
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
         {
-          
+
             if (!m_inMotion)
             {
                 m_rigid.drag = 0.8f;
@@ -230,6 +254,9 @@ public class Ball : MonoBehaviour {
                 //Update scores
                 strokeCount++;
                 GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
+
+                //Sends message to the bot
+                m_bot.Hit(user);
 
                 /*******************/
                 /*     To Do:     */
@@ -253,11 +280,32 @@ public class Ball : MonoBehaviour {
                 int angVal = int.Parse(cmd[1]);
 
                 //Checks if the angle is valid
-                if (angVal >= 0 || angVal <= 360)
+                if (angVal >= 0 && angVal <= 360)
                 {
                     //Stores the angle
                     m_angle = angVal;
+
+                    //Sends message to the bot
+                    m_bot.Angle(user, m_angle);                    
                 }
+                else if (angVal > 360)
+                {
+                    //Stores the angle
+                    m_angle = 0;
+
+                    //Sends message to the bot
+                    m_bot.OverMaxAngle(user);
+                }
+                else if (angVal < 0)
+                {
+                    //Stores the angle
+                    m_angle = 0;
+
+                    //Sends message to the bot
+                    m_bot.UnderMinAngle(user);
+                }
+
+                ScalePower();
             }
             catch { }
         }
@@ -266,22 +314,31 @@ public class Ball : MonoBehaviour {
         {
             try
             {
-                int adjVal = int.Parse(cmd[1]) + m_angle;
+                int adjVal = int.Parse(cmd[1]);
 
+                int newAng = m_angle + adjVal;
+
+                /*
                 //Limits max and min angle
-                if (adjVal > 360)
+                if (newAng > 360)
                 {
-                    adjVal -= 360;
+                    newAng -= 360;
                 }
-                else if (adjVal < 0)
+                else if (newAng < 0)
                 {
-                    adjVal += 360;
+                    newAng += 360;
                 }
+                */
 
-                m_angle = adjVal;
+                m_angle += adjVal;
+
+                //Sends message to the bot
+                m_bot.Adjust(user, adjVal, m_angle);
+
+                ScalePower();
             }
-        
-        catch { }
+
+            catch { }
         }
 
         //Sets the angle of the ball
@@ -292,18 +349,27 @@ public class Ball : MonoBehaviour {
                 float pwVal = float.Parse(cmd[1]);
 
                 //Checks if the angle is valid
-                if (pwVal >= minPower && pwVal <= maxPower) 
+                if (pwVal >= m_minPower && pwVal <= m_maxPower)
                 {
                     m_power = pwVal;
+
+                    //Sends message to the bot
+                    m_bot.Power(user, m_power);
                 }
-                if(pwVal > maxPower)
+                else if (pwVal > m_maxPower)
                 {
                     //Do something here, possibly send admin message to twitch chat
-                    m_power = maxPower;
+                    m_power = m_maxPower;
+
+                    //Sends message to the bot
+                    m_bot.OverMaxPower(user, m_maxPower);
                 }
-                if (pwVal < minPower)
+                else if(pwVal < m_minPower)
                 {
-                    m_power = minPower;
+                    m_power = m_minPower;
+
+                    //Sends message to the bot
+                    m_bot.UnderMinPower(user, m_minPower);
                 }
 
                 ScalePower();
@@ -314,6 +380,29 @@ public class Ball : MonoBehaviour {
         if (cmd[0].ToLower() == "!reset")
         {
             this.transform.position = m_start;
+
+            //Sends message to the bot
+            m_bot.Reset(user);
         }
+
+        if (cmd[0].ToLower() == "!commands")
+        {
+            //Sends message to the bot
+            m_bot.GolfCommands();
+        }
+    }
+
+    public int MaxPower {
+        set { m_maxPower = value; }
+    }
+
+    public int MinPower
+    {
+        set { m_minPower = value; }
+    }
+
+    public MinigolfBotReplys Bot
+    {
+        set { m_bot = value; }
     }
 }

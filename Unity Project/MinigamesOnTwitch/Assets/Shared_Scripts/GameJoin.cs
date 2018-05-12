@@ -38,18 +38,37 @@ public class GameJoin : MonoBehaviour
             int index = CheckIfPlayer(user);
             int spaceIndex = CheckIfSpace();
 
+            //If spaces are available
             if (index == -1 && spaceIndex != -1)
             {
-                //New player successfully joins
-                Debug.Log(user + " :: has joined");
-                m_irc.SendMsg(user + " has joined");
-                AddPlayer(user, spaceIndex);
+                Debug.Log("Minigolf Controller: " + this.GetComponent<MinigolfController>());
+                Debug.Log("Level: " + this.GetComponent<LevelController>().CurrentCourse);
+
+                //Check which minigame is attached
+                if (this.GetComponent<MinigolfController>())
+                {
+                    //Minigolf join requirements
+                    if (this.GetComponent<LevelController>().CurrentCourse == 0)
+                    {
+                        //New player successfully joins
+                        Debug.Log(user + " :: has joined");
+                        m_irc.SendMsg(user + " has joined");
+                        AddPlayer(user, spaceIndex);
+                    }
+                    else
+                    {
+                        //Unable to join response
+                        m_irc.SendMsg(user + " cannot join after first hole");
+                    }
+                }
             }
+            //If the player already has an index they are already playing
             else if (index != -1)
             {
                 //Player try to join again
                 m_irc.SendMsg(user + " has already joined");
             }
+            //If no spaces are left they cannot join
             else if (spaceIndex == -1)
             {
                 //No player spaces left
@@ -126,7 +145,7 @@ public class GameJoin : MonoBehaviour
         //Sends messages to minigame controllers to say that a player has joined
         try
         {
-            this.GetComponent<BallControl>().PlayerJoined(index); //MiniGolf
+            this.GetComponent<MinigolfController>().PlayerJoined(index); //MiniGolf
         }
         catch { }
     }
@@ -137,7 +156,7 @@ public class GameJoin : MonoBehaviour
         try
         {
             //MiniGolf
-            this.GetComponent<BallControl>().PlayerLeft(index); 
+            this.GetComponent<MinigolfController>().PlayerLeft(index); 
         }
         catch { }
     }

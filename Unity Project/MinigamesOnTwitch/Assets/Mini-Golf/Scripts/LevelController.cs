@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BallControl))]
+[RequireComponent(typeof(MinigolfController))]
 public class LevelController : MonoBehaviour
 {
     //Public
@@ -12,7 +12,7 @@ public class LevelController : MonoBehaviour
     private GameObject[] m_starts;
     private GameObject[] m_ends;
 
-    private BallControl m_ballControl;
+    private MinigolfController m_ballControl;
 
     private bool[] m_playerState;
 
@@ -31,7 +31,7 @@ public class LevelController : MonoBehaviour
     void Start()
     {
         //Gets the ball controller
-        m_ballControl = this.GetComponent<BallControl>(); 
+        m_ballControl = this.GetComponent<MinigolfController>(); 
 
         m_level = 0; //Starts the level at level 1
 
@@ -157,8 +157,13 @@ public class LevelController : MonoBehaviour
         get { return m_starts[m_level].transform.position; }
     }
 
-    public GameObject CurrentCourse
+    public GameObject CurrentCourseObject
     {
         get { return levels[m_level]; }
+    }
+
+    public int CurrentCourse
+    {
+        get { return m_level; }
     }
 }
