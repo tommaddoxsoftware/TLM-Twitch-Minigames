@@ -38,7 +38,7 @@ public class MinigolfController : MonoBehaviour
         m_IRC.messageRecievedEvent.AddListener(OnChatMsgRecieved);
 
         //Creates responses for imputs
-        m_twitchBot = new MinigolfBotReplys(m_IRC, maxPower);
+        m_twitchBot = new MinigolfBotReplys(m_IRC);
 
         m_Splitter = new StringSplitter();
 
