@@ -5,7 +5,8 @@ using UnityEngine;
 using System.Xml;
 using System.Xml.Serialization;
 
-public class AdminControls : MonoBehaviour {
+public class AdminControls : MonoBehaviour
+{
     public List<Admin> admins;
 
     private AdminContainer m_admins;
@@ -44,16 +45,32 @@ public class AdminControls : MonoBehaviour {
         switch (msgArray[0].ToLower())
         {
             case "!addadmin":
-                AddAdmin(msgArray[1].ToLower());
+                if (msgArray.Length > 1)
+                {
+                    AddAdmin(msgArray[1].ToLower());
+                }
+                else
+                {
+                    m_irc.SendMsg(user + " invalid user");
+                }
+
                 break;
             case "!removeadmin":
-                RemoveAdmin(msgArray[1].ToLower());
+                if (msgArray.Length > 1)
+                {
+                    RemoveAdmin(msgArray[1].ToLower());
+                }
+                else
+                {
+                    m_irc.SendMsg(user + " invalid user");
+                }
+
                 break;
             default:
                 //Minigame Check
                 if (this.GetComponent<MinigolfController>())
                 {
-                    this.GetComponent<MinigolfAdmin>().Commands(user,msgArray);
+                    this.GetComponent<MinigolfAdmin>().Commands(user, msgArray);
                 }
                 break;
         }
