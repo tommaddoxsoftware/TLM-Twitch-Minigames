@@ -34,3 +34,5 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+Unity Project/MinigamesOnTwitch/Assets/admins.xml
+Unity Project/MinigamesOnTwitch/Assets/admins.xml.meta
