@@ -35,16 +35,12 @@ public class AdminControls : MonoBehaviour {
         //Load XML
         m_admins = AdminContainer.Load(Path.Combine(Application.dataPath, "admins.xml"));
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     public void Commands(string user, string[] msgArray)
     {
         Debug.Log(user + " is an admin");
 
+        //Base admin commands
         switch (msgArray[0].ToLower())
         {
             case "!addadmin":
@@ -52,6 +48,13 @@ public class AdminControls : MonoBehaviour {
                 break;
             case "!removeadmin":
                 RemoveAdmin(msgArray[1].ToLower());
+                break;
+            default:
+                //Minigame Check
+                if (this.GetComponent<MinigolfController>())
+                {
+                    this.GetComponent<MinigolfAdmin>().Commands(user,msgArray);
+                }
                 break;
         }
     }
