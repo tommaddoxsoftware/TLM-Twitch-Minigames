@@ -29,16 +29,11 @@ public class AdminControls : MonoBehaviour {
 
             newXml.Save(Path.Combine(Application.dataPath, "admins.xml"));
 
-            Debug.Log("Create new admin file");
+            Debug.Log("Created new admin file");
         }
 
         //Load XML
         m_admins = AdminContainer.Load(Path.Combine(Application.dataPath, "admins.xml"));
-
-        for (int i = 0; i < m_admins.admins.Count; i++)
-        {
-            Debug.Log("Admin: " + i + ": " + m_admins.admins[i].name);
-        }
     }
 	
 	// Update is called once per frame
@@ -53,10 +48,10 @@ public class AdminControls : MonoBehaviour {
         switch (msgArray[0].ToLower())
         {
             case "!addadmin":
-                AddAdmin(msgArray[1]);
+                AddAdmin(msgArray[1].ToLower());
                 break;
-            case "":
-
+            case "!removeadmin":
+                RemoveAdmin(msgArray[1].ToLower());
                 break;
         }
     }
@@ -75,7 +70,6 @@ public class AdminControls : MonoBehaviour {
             //Check the list for admins
             for (int i = 0; i < m_admins.admins.Count; i++)
             {
-                Debug.Log("Admin: " + i + ": " + m_admins.admins[i].name);
                 if (user == m_admins.admins[i].name)
                 {
                     //Returns true if an admin is found
@@ -87,6 +81,31 @@ public class AdminControls : MonoBehaviour {
         return false;
     }
 
+    private int GetAdminIndex(string user)
+    {
+        //If the user is the channel owner they are an admin
+        if (user == PlayerPrefs.GetString("TwitchUsr"))
+        {
+            return -2;
+        }
+
+        //Checks if there are any admins
+        if (m_admins.admins != null)
+        {
+            //Check the list for admins
+            for (int i = 0; i < m_admins.admins.Count; i++)
+            {
+                if (user == m_admins.admins[i].name)
+                {
+                    //Returns true if an admin is found
+                    return i;
+                }
+            }
+        }
+
+        return -1;
+    }
+
     private void AddAdmin(string user)
     {
         Admin newAdmin = new Admin();
@@ -96,7 +115,33 @@ public class AdminControls : MonoBehaviour {
 
         UpdateFile();
 
-        m_irc.SendMsg(user + " is now and admin");
+        m_irc.SendMsg(user + " is now an admin");
+    }
+
+    private void RemoveAdmin(string user)
+    {
+        //Gets the index value of the user
+        int index = GetAdminIndex(user);
+
+        //Is an admin
+        if (index >= 0)
+        {
+            m_admins.admins.RemoveAt(index);
+
+            UpdateFile();
+
+            m_irc.SendMsg(user + " is no longer an admin");
+        }
+        //Is not an admin
+        else if (index == -1)
+        {
+            m_irc.SendMsg(user + " is not an admin");
+        }
+        //Is the channel owner
+        else if (index == -2)
+        {
+            m_irc.SendMsg(user + " is the channel owner, cannot remove");
+        }
     }
 
     private void UpdateFile()
