@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<AdminCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Admins>
+    <Admin name="electric_pie" />
+  </Admins>
+</AdminCollection>
