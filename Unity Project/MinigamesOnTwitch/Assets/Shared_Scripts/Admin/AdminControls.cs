@@ -12,8 +12,9 @@ public class AdminControls : MonoBehaviour {
 
     private TwitchIRC m_irc;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         m_irc = this.GetComponent<TwitchIRC>();
 
         Debug.Log("XML exists: " + File.Exists(Path.Combine(Application.dataPath, "admins.xml")));
@@ -27,10 +28,17 @@ public class AdminControls : MonoBehaviour {
             newXml.admins = new List<Admin>();
 
             newXml.Save(Path.Combine(Application.dataPath, "admins.xml"));
-        }      
+
+            Debug.Log("Create new admin file");
+        }
 
         //Load XML
-        AdminContainer adminCollection = AdminContainer.Load(Path.Combine(Application.dataPath, "admins.xml"));
+        m_admins = AdminContainer.Load(Path.Combine(Application.dataPath, "admins.xml"));
+
+        for (int i = 0; i < m_admins.admins.Count; i++)
+        {
+            Debug.Log("Admin: " + i + ": " + m_admins.admins[i].name);
+        }
     }
 	
 	// Update is called once per frame
@@ -44,7 +52,12 @@ public class AdminControls : MonoBehaviour {
 
         switch (msgArray[0].ToLower())
         {
-            
+            case "!addadmin":
+                AddAdmin(msgArray[1]);
+                break;
+            case "":
+
+                break;
         }
     }
 
@@ -57,12 +70,13 @@ public class AdminControls : MonoBehaviour {
         }
 
         //Checks if there are any admins
-        if (admins != null)
+        if (m_admins.admins != null)
         {
             //Check the list for admins
-            for (int i = 0; i < admins.Count; i++)
+            for (int i = 0; i < m_admins.admins.Count; i++)
             {
-                if (user == admins[i].name)
+                Debug.Log("Admin: " + i + ": " + m_admins.admins[i].name);
+                if (user == m_admins.admins[i].name)
                 {
                     //Returns true if an admin is found
                     return true;
@@ -71,5 +85,22 @@ public class AdminControls : MonoBehaviour {
         }
 
         return false;
+    }
+
+    private void AddAdmin(string user)
+    {
+        Admin newAdmin = new Admin();
+        newAdmin.name = user.ToLower();
+
+        m_admins.admins.Add(newAdmin);
+
+        UpdateFile();
+
+        m_irc.SendMsg(user + " is now and admin");
+    }
+
+    private void UpdateFile()
+    {
+        m_admins.Save(Path.Combine(Application.dataPath, "admins.xml"));
     }
 }
