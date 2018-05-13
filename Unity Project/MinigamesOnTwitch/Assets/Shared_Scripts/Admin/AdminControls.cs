@@ -10,30 +10,66 @@ public class AdminControls : MonoBehaviour {
 
     private AdminContainer m_admins;
 
+    private TwitchIRC m_irc;
+
 	// Use this for initialization
 	void Start () {
-        admins = new List<Admin>();
+        m_irc = this.GetComponent<TwitchIRC>();
 
-        Admin adminTest = new Admin();
-        adminTest.name = "electric_pie";
+        Debug.Log("XML exists: " + File.Exists(Path.Combine(Application.dataPath, "admins.xml")));
 
-        admins.Add(adminTest);
+        //If no XML file exsists, create one
+        if (!File.Exists(Path.Combine(Application.dataPath, "admins.xml")))
+        {
+            //Save XML
+            AdminContainer newXml = new AdminContainer();
 
-        //Save XML
-        AdminContainer test = new AdminContainer();
+            newXml.admins = new List<Admin>();
 
-        test.admins = admins;
-
-        test.Save(Path.Combine(Application.dataPath, "admins.xml"));
+            newXml.Save(Path.Combine(Application.dataPath, "admins.xml"));
+        }      
 
         //Load XML
         AdminContainer adminCollection = AdminContainer.Load(Path.Combine(Application.dataPath, "admins.xml"));
-
-        Debug.Log("Admin: " + adminCollection.admins[0].name);
     }
 	
 	// Update is called once per frame
 	void Update () {
 		
 	}
+
+    public void Commands(string user, string[] msgArray)
+    {
+        Debug.Log(user + " is an admin");
+
+        switch (msgArray[0].ToLower())
+        {
+            
+        }
+    }
+
+    public bool CheckIfAdmin(string user)
+    {
+        //If the user is the channel owner they are an admin
+        if (user == PlayerPrefs.GetString("TwitchUsr"))
+        {
+            return true;
+        }
+
+        //Checks if there are any admins
+        if (admins != null)
+        {
+            //Check the list for admins
+            for (int i = 0; i < admins.Count; i++)
+            {
+                if (user == admins[i].name)
+                {
+                    //Returns true if an admin is found
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
