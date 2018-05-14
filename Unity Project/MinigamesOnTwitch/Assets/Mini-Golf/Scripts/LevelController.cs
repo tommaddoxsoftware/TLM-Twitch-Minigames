@@ -89,14 +89,19 @@ public class LevelController : MonoBehaviour
         //Finds the index of the ball in the ball array
         int ballIndex = m_ballControl.FindBallIndex(ball);
 
+        UpdateBall(ballIndex);
+    }
+
+    public void UpdateBall(int ballIndex)
+    {
         //If the object isnt a ball do nothing
         if (ballIndex != -1)
         {
             //Changes the balls state
-            m_playerState[ballIndex] = true; 
+            m_playerState[ballIndex] = true;
 
             //Hides the ball
-            m_ballControl.HideBall(ballIndex); 
+            m_ballControl.HideBall(ballIndex);
 
             //Checks to see that all balls have finished
             if (CheckAllFinished())
@@ -129,9 +134,9 @@ public class LevelController : MonoBehaviour
                 }
 
                 //Move the balls to the new start point
-                m_ballControl.MoveBalls(); 
+                m_ballControl.MoveBalls();
 
-                ResetBallState(); 
+                ResetBallState();
             }
         }
     }
@@ -143,6 +148,11 @@ public class LevelController : MonoBehaviour
         {
             m_playerState[i] = false;
         }
+    }
+
+    public void SetPlayerState(int player, bool state)
+    {
+        m_playerState[player] = state;
     }
 
     //Returns the state of the player
