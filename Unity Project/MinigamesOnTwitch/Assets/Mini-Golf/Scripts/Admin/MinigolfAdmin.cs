@@ -31,7 +31,7 @@ public class MinigolfAdmin : MonoBehaviour
     {
         switch (msgArray[0].ToLower())
         {
-            case "!resetall":
+            case "!!resetall":
                 //Gets all balls
                 GameObject[] balls = m_minigolf.Balls;
                 List<int> activePlayers = m_players.GetActivePlayers();
@@ -43,12 +43,34 @@ public class MinigolfAdmin : MonoBehaviour
 
                 m_irc.SendMsg("All players have been reset");
                 break;
-            case "!reset":
+            case "!!reset":
+                //Prevents single word sentances from breaking
+                if (msgArray.Length > 1)
+                {
+                    //Get the player
+                    int playerIndex = m_players.CheckIfPlayer(msgArray[1].ToLower());
+
+                    if (playerIndex >= 0)
+                    {
+                        //Resets the players ball
+                        m_minigolf.Balls[playerIndex].GetComponent<Ball>().ResetBall();
+
+                        m_irc.SendMsg(msgArray[1].ToLower() + " has been reset by an admin");
+                    }
+                    else
+                    {
+                        m_irc.SendMsg(msgArray[1].ToLower() + " is not in the current game");
+                    }
+                }
+                else
+                {
+                    m_irc.SendMsg(user + " invalid user");
+                }
 
                 break;
-            case "!nextcourse":
+            case "!!nextcourse":
                 break;
-            case "!finishall":
+            case "!!finishall":
                 //Gets all active playerds
                 List<int> activePlayer = m_players.GetActivePlayers();
 
@@ -58,7 +80,7 @@ public class MinigolfAdmin : MonoBehaviour
                     m_levels.FinishBall(activePlayer[i]);
                 }
                 break;
-            case "!finish":
+            case "!!finish":
                 //Prevents single word sentances from breaking
                 if (msgArray.Length > 1)
                 {
@@ -82,7 +104,7 @@ public class MinigolfAdmin : MonoBehaviour
                     m_irc.SendMsg(user + " invalid user");
                 }
                 break;
-            case "!kick":
+            case "!!kick":
                 //Prevents single word sentances from breaking
                 if (msgArray.Length > 1)
                 {
