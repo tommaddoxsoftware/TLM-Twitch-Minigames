@@ -68,8 +68,6 @@ public class MinigolfAdmin : MonoBehaviour
                 }
 
                 break;
-            case "!!nextcourse":
-                break;
             case "!!finishall":
                 //Gets all active playerds
                 List<int> activePlayer = m_players.GetActivePlayers();
