@@ -32,17 +32,30 @@ public class MinigolfAdmin : MonoBehaviour
         switch (msgArray[0].ToLower())
         {
             case "!resetall":
+                //Gets all balls
+                GameObject[] balls = m_minigolf.Balls;
+                List<int> activePlayers = m_players.GetActivePlayers();
+
+                for (int i = 0; i < activePlayers.Count; i++)
+                {
+                    balls[activePlayers[i]].GetComponent<Ball>().ResetBall();
+                }
+
+                m_irc.SendMsg("All players have been reset");
                 break;
             case "!reset":
+
                 break;
             case "!nextcourse":
                 break;
             case "!finishall":
                 //Gets all active playerds
-                 for (int i = 0; i < m_players.GetActivePlayers().Count; i++)
+                List<int> activePlayer = m_players.GetActivePlayers();
+
+                for (int i = 0; i < activePlayer.Count; i++)
                 {
                     //Force finishes all active players
-                    m_levels.FinishBall(m_players.GetActivePlayers()[i]);
+                    m_levels.FinishBall(activePlayer[i]);
                 }
                 break;
             case "!finish":
