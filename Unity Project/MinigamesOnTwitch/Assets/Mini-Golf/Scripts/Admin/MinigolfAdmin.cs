@@ -4,7 +4,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(AdminControls)),
     RequireComponent(typeof(MinigolfController)),
-    RequireComponent(typeof(GameJoin))]
+    RequireComponent(typeof(GameJoin)), 
+    RequireComponent(typeof(LevelController))]
 public class MinigolfAdmin : MonoBehaviour
 {
     private MinigolfController m_minigolf;
@@ -19,12 +20,6 @@ public class MinigolfAdmin : MonoBehaviour
         m_players = this.GetComponent<GameJoin>();
         m_irc = this.GetComponent<TwitchIRC>();
         m_levels = this.GetComponent<LevelController>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void Commands(string user, string[] msgArray)
@@ -127,10 +122,5 @@ public class MinigolfAdmin : MonoBehaviour
                 }
                 break;
         }
-    }
-
-    private void KickPlayer()
-    {
-
     }
 }

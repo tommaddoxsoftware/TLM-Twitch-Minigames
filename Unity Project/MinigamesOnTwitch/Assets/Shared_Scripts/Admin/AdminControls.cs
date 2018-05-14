@@ -23,17 +23,19 @@ public class AdminControls : MonoBehaviour
         //If no XML file exsists, create one
         if (!File.Exists(Path.Combine(Application.dataPath, "admins.xml")))
         {
-            //Save XML
+            //Creates a blank admin container
             AdminContainer newXml = new AdminContainer();
 
+            //Creats a blank admin list and adds it to the container
             newXml.admins = new List<Admin>();
 
+            //Saves the new XML file
             newXml.Save(Path.Combine(Application.dataPath, "admins.xml"));
 
             Debug.Log("Created new admin file");
         }
 
-        //Load XML
+        //Loads the XML
         m_admins = AdminContainer.Load(Path.Combine(Application.dataPath, "admins.xml"));
     }
 
@@ -44,7 +46,7 @@ public class AdminControls : MonoBehaviour
         //Base admin commands
         switch (msgArray[0].ToLower())
         {
-            case "!addadmin":
+            case "!!addadmin":
                 if (msgArray.Length > 1)
                 {
                     AddAdmin(msgArray[1].ToLower());
@@ -55,7 +57,7 @@ public class AdminControls : MonoBehaviour
                 }
 
                 break;
-            case "!removeadmin":
+            case "!!removeadmin":
                 if (msgArray.Length > 1)
                 {
                     RemoveAdmin(msgArray[1].ToLower());
@@ -72,6 +74,7 @@ public class AdminControls : MonoBehaviour
                 {
                     this.GetComponent<MinigolfAdmin>().Commands(user, msgArray);
                 }
+                //Add other minigames admin commands here
                 break;
         }
     }
@@ -128,11 +131,14 @@ public class AdminControls : MonoBehaviour
 
     private void AddAdmin(string user)
     {
+        //Creates a new admin
         Admin newAdmin = new Admin();
         newAdmin.name = user.ToLower();
 
+        //Adds the user to the list
         m_admins.admins.Add(newAdmin);
 
+        //Update the XML
         UpdateFile();
 
         m_irc.SendMsg(user + " is now an admin");
@@ -166,6 +172,7 @@ public class AdminControls : MonoBehaviour
 
     private void UpdateFile()
     {
+        //Save the XML file
         m_admins.Save(Path.Combine(Application.dataPath, "admins.xml"));
     }
 }

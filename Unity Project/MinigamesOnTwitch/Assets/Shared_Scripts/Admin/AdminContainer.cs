@@ -13,6 +13,7 @@ public class AdminContainer
     public void Save(string path)
     {
         XmlSerializer serializer = new XmlSerializer(typeof(AdminContainer));
+
         using (FileStream stream = new FileStream(path, FileMode.Create))
         {
             serializer.Serialize(stream, this);
@@ -23,6 +24,7 @@ public class AdminContainer
     public static AdminContainer Load(string path)
     {
         XmlSerializer serializer = new XmlSerializer(typeof(AdminContainer));
+
         using (FileStream stream = new FileStream(path, FileMode.Open))
         {
             return serializer.Deserialize(stream) as AdminContainer;
