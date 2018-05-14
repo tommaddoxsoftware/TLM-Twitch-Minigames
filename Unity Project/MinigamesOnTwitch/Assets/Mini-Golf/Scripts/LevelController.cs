@@ -89,6 +89,17 @@ public class LevelController : MonoBehaviour
         //Finds the index of the ball in the ball array
         int ballIndex = m_ballControl.FindBallIndex(ball);
 
+        // Finds Objects with the tag "Player", stores them in an array activePlayersInScene
+        GameObject[] activePlayersInScene = GameObject.FindGameObjectsWithTag("Player");
+        if (activePlayersInScene.Length > 1) // if the amount of active players is more than 1
+        {
+            FindObjectOfType<AudioManager>().Play("PlayerCompleteCourse1"); // play sound PlayerCompleteCourse1
+        }
+        else if (activePlayersInScene.Length <= 1) // if the amount of active players is less than or equal to 1
+        {
+            FindObjectOfType<AudioManager>().Play("PlayerCompleteCourse3"); // play sound PlayerCompleteCourse3
+        }
+
         //If the object isnt a ball do nothing
         if (ballIndex != -1)
         {
@@ -129,9 +140,12 @@ public class LevelController : MonoBehaviour
                 }
 
                 //Move the balls to the new start point
-                m_ballControl.MoveBalls(); 
+                m_ballControl.MoveBalls();
 
-                ResetBallState(); 
+                // Play sound if all players have completed the current course
+                FindObjectOfType<AudioManager>().Play("PlayerCompleteCourse3");
+
+                ResetBallState();
             }
         }
     }
