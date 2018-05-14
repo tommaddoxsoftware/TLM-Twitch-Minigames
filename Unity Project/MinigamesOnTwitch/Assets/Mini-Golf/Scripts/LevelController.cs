@@ -89,10 +89,10 @@ public class LevelController : MonoBehaviour
         //Finds the index of the ball in the ball array
         int ballIndex = m_ballControl.FindBallIndex(ball);
 
-        UpdateBall(ballIndex);
+        FinishBall(ballIndex);
     }
 
-    public void UpdateBall(int ballIndex)
+    public void FinishBall(int ballIndex)
     {
         //If the object isnt a ball do nothing
         if (ballIndex != -1)
