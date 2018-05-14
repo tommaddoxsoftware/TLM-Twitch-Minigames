@@ -191,4 +191,9 @@ public class MinigolfController : MonoBehaviour
             m_playerBalls[activePlayers[i]].GetComponent<Ball>().ResetBallAdjustments();
         }
     }
+
+    public GameObject[] Balls
+    {
+        get { return m_playerBalls; }
+    }
 }
