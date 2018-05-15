@@ -108,6 +108,15 @@ public class LevelController : MonoBehaviour
                     m_starts[m_level].SetActive(false);
                     m_ends[m_level].SetActive(false);
 
+                    //Save the score to player's score array, and reset
+                    Ball player = ball.GetComponent<Ball>();
+                    player.overallScore += player.strokeCount;
+                    player.playerScore[m_level] = player.strokeCount;                    
+                    player.strokeCount = 0;
+                    Debug.Log("Player scored! It took them " +player.overallScore +" turns");
+                    UiController uiControl = GameObject.Find("UiManager").GetComponent<UiController>();
+                    uiControl.PopulateScoreboard();
+
                     //Increases the level
                     m_level++;
 

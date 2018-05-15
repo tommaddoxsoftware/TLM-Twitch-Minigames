@@ -26,7 +26,7 @@ public class MinigolfController : MonoBehaviour
     private StringSplitter m_Splitter; 
     private GameJoin m_playerList;
 
-    private GameObject[] m_playerBalls;
+    public GameObject[] m_playerBalls;
 
     public int outOfBoundsTimeout = 3;
 

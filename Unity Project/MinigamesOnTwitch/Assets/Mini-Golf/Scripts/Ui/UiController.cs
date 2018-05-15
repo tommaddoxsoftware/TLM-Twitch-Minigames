@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,9 +19,11 @@ public class UiController : MonoBehaviour {
     [SerializeField]
     private GameObject usrScorePrefab;
     [SerializeField]
-
-    //Event Popup text
     private Text usrEventText;
+    [SerializeField]
+    private GameObject nameContainer;
+    [SerializeField]
+    private GameObject[] holeContainers;
    
     //Stores Main Camera and its animation controller.
     private bool animFin = false;
@@ -44,6 +47,8 @@ public class UiController : MonoBehaviour {
     private Text themeNameUi;
     [SerializeField]
     private Text timerUi;
+
+    
 
     private void Start()
     {
@@ -185,6 +190,31 @@ public class UiController : MonoBehaviour {
         //Set the text correctly.
         name.GetComponent<Text>().text = "PLAYER LEFT";
         score.GetComponent<Text>().text = "DNF";
+    }
+
+    public void PopulateScoreboard()
+    {
+        //Get current players
+        GameObject playerList = GameObject.Find("MinigameManager");
+        List<int> currPlayers = playerList.GetComponent<GameJoin>().GetActivePlayers();
+
+        List<Score> playerScores = new List<Score>();
+
+        for(int i=0; i<currPlayers.Count; i++)
+        {
+
+            //Add each player as an object containing ID and score
+            playerScores.Add(new Score
+            {
+                ballID = currPlayers[i],
+                playerName = playerList.GetComponent<MinigolfController>().m_playerBalls[i].GetComponent<Ball>().usrName,
+                playerScore = playerList.GetComponent<MinigolfController>().m_playerBalls[i].GetComponent<Ball>().overallScore
+            });            
+        }
+
+        //Sort each player by score
+        List<Score> sortedList = new List<Score>();
+        sortedList = playerScores.OrderBy(x => x.playerScore).ToList();
     }
 
     public void FadeIn(float fadeSpeed, Text textToUse)
