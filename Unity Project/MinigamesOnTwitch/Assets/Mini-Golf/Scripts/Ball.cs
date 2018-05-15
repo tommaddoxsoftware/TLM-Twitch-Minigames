@@ -192,10 +192,6 @@ public class Ball : MonoBehaviour {
     public void StopBall()
     {
         this.transform.GetChild(0).gameObject.SetActive(true);
-        /*
-        m_rigid.isKinematic = true;
-        m_rigid.isKinematic = false;
-        */
         m_rigid.drag = 10.0f;
         m_inMotion = false;
 
@@ -237,8 +233,9 @@ public class Ball : MonoBehaviour {
         //Propells the ball in the direction
         if (cmd[0].ToLower() == "!hit")
         {
+         
+            if (!m_inMotion && m_rigid.velocity == new Vector3(0,0,0))
 
-            if (!m_inMotion)
             {
                 m_rigid.drag = 0.8f;
                 //Store the transform (so we can access the position) before we fire the ball

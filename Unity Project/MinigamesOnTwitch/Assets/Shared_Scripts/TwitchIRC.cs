@@ -127,7 +127,10 @@ public class TwitchIRC : MonoBehaviour
         if (PlayerPrefs.HasKey("TwitchAuth"))
             oauth = PlayerPrefs.GetString("TwitchAuth");
         if (PlayerPrefs.HasKey("TwitchUsr"))
-            nickName = channelName = PlayerPrefs.GetString("TwitchUsr").ToLower();
+            channelName = PlayerPrefs.GetString("TwitchUsr").ToLower();
+        if (PlayerPrefs.HasKey("BotUsr"))
+            nickName = PlayerPrefs.GetString("BotUsr").ToLower();
+
     }
 
     void OnEnable()
