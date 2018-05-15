@@ -142,9 +142,6 @@ public class BallControl : MonoBehaviour
         CreateBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         ResetBall(index);
-
-        //Play Player Joined Sound
-        FindObjectOfType<AudioManager>().Play("PlayerJoinedGame");
     }
 
     public void PlayerLeft(int index)
@@ -153,9 +150,6 @@ public class BallControl : MonoBehaviour
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         GameObject.Find("UiManager").GetComponent<UiController>().RemoveFromScoreboard(m_playerBalls[index]);
         ResetBall(index);
-
-        //Play Player Left Sound
-        FindObjectOfType<AudioManager>().Play("PlayerLeftGame");
     }
 
     public void MoveBalls()

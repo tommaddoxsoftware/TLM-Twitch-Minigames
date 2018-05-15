@@ -44,6 +44,9 @@ public class GameJoin : MonoBehaviour
                 Debug.Log(user + " :: has joined");
                 m_irc.SendMsg(user + " has joined");
                 AddPlayer(user, spaceIndex);
+
+                //Play Player Joined Sound
+                FindObjectOfType<AudioManager>().Play("PlayerJoinedGame");
             }
             else if (index != -1)
             {
@@ -68,6 +71,9 @@ public class GameJoin : MonoBehaviour
                 Debug.Log(user + " :: has left");
                 m_irc.SendMsg(user + " has left");
                 RemovePlayer(index);
+
+                //Play Player Left Sound
+                FindObjectOfType<AudioManager>().Play("PlayerLeftGame");
             }
             else
             {
