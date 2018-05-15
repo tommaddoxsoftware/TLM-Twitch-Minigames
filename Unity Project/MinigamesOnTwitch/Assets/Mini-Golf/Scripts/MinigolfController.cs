@@ -25,6 +25,7 @@ public class MinigolfController : MonoBehaviour
 
     private StringSplitter m_Splitter; 
     private GameJoin m_playerList;
+    private AdminControls m_adminControls;
 
     private GameObject[] m_playerBalls;
 
@@ -42,7 +43,11 @@ public class MinigolfController : MonoBehaviour
 
         m_Splitter = new StringSplitter();
 
+        //Gets the script to allow players to join
         m_playerList = this.GetComponent<GameJoin>();
+
+        //Gets the script to handle admin commands
+        m_adminControls = this.GetComponent<AdminControls>();
 
         m_playerBalls = new GameObject[m_playerList.MaxPlayers];
 
@@ -94,6 +99,12 @@ public class MinigolfController : MonoBehaviour
 
         //Joining commands
         m_playerList.Commands(msgArray, user); 
+
+        //Admin Commands
+        if (m_adminControls.CheckIfAdmin(user))
+        {
+            m_adminControls.Commands(user, msgArray);
+        }
 
         //Gets the index of a player if they are in the game
         int player = m_playerList.CheckIfPlayer(user); 
@@ -161,7 +172,6 @@ public class MinigolfController : MonoBehaviour
         RemoveBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         GameObject.Find("UiManager").GetComponent<UiController>().RemoveFromScoreboard(m_playerBalls[index]);
-        ResetBall(index);
     }
 
     public void MoveBalls()
@@ -180,5 +190,10 @@ public class MinigolfController : MonoBehaviour
 
             m_playerBalls[activePlayers[i]].GetComponent<Ball>().ResetBallAdjustments();
         }
+    }
+
+    public GameObject[] Balls
+    {
+        get { return m_playerBalls; }
     }
 }

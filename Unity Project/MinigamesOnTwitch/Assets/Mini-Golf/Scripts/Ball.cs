@@ -376,7 +376,7 @@ public class Ball : MonoBehaviour {
 
         if (cmd[0].ToLower() == "!reset")
         {
-            this.transform.position = m_start;
+            ResetBall();
 
             //Sends message to the bot
             m_bot.Reset(user);
@@ -387,6 +387,14 @@ public class Ball : MonoBehaviour {
             //Sends message to the bot
             m_bot.GolfCommands();
         }
+    }
+
+    public void ResetBall()
+    {
+        //Resets the ball
+        this.transform.position = m_start;
+
+        ResetBallAdjustments();
     }
 
     public int MaxPower {
