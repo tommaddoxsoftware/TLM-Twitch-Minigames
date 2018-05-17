@@ -252,14 +252,21 @@ public class Ball : MonoBehaviour {
                 strokeCount++;
                 GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
 
+
                 //Sends message to the bot
                 m_bot.Hit(user);
 
-                /*******************/
-                /*     To Do:     */
-                /*****************/
-                //Store each player's score per course
-                //Only display score per course
+                //Play audio Ball_Hit_power
+                if (m_power <= 30) // If power is equal to 30 or less than 30, play audio clip [0]
+                {
+                    FindObjectOfType<AudioManager>().Play("PlayerHitSoft");
+                }
+                else if (m_power > 30 ) // If power is set to more than 30, play audio clip [1]
+                {
+                    FindObjectOfType<AudioManager>().Play("PlayerHitHard");
+                }
+
+
             }
         }
 

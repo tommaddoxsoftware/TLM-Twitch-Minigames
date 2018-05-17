@@ -54,6 +54,9 @@ public class GameJoin : MonoBehaviour
                         Debug.Log(user + " :: has joined");
                         m_irc.SendMsg(user + " has joined");
                         AddPlayer(user, spaceIndex);
+
+                        //Play Player Joined Sound
+                        FindObjectOfType<AudioManager>().Play("PlayerJoinedGame");
                     }
                     else
                     {
@@ -61,6 +64,7 @@ public class GameJoin : MonoBehaviour
                         m_irc.SendMsg(user + " cannot join after first hole");
                     }
                 }
+
             }
             //If the player already has an index they are already playing
             else if (index != -1)
@@ -87,6 +91,9 @@ public class GameJoin : MonoBehaviour
                 Debug.Log(user + " :: has left");
                 m_irc.SendMsg(user + " has left");
                 RemovePlayer(index);
+
+                //Play Player Left Sound
+                FindObjectOfType<AudioManager>().Play("PlayerLeftGame");
             }
             else
             {
