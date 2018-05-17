@@ -8,9 +8,13 @@ public class AudioManager : MonoBehaviour {
 
 
     public Sound[] sounds; //Array of sounds from the class Sound
+    public AudioClip[] music; //Array of music from the class Sound
+    public AudioSource musicAudioSource; // Audio Source used for game music
 
 	// Use this for initialization
 	void Awake () {
+
+        musicAudioSource.loop = false;
 
         foreach (Sound s in sounds)
         {
@@ -27,6 +31,8 @@ public class AudioManager : MonoBehaviour {
     public void Start()
     {
         Play("BackgroundSound"); // Play background sound on start
+
+        GetRandomMusic(); // Play random music sound on start
     }
 
     public void Play (string name)
@@ -41,5 +47,19 @@ public class AudioManager : MonoBehaviour {
         s.source.volume = s.volume * (1 + UnityEngine.Random.Range(-s.randomVolume / 2f, s.randomVolume / 2f)); // Randomise the original value of volume for the sound
         s.source.pitch = s.pitch * (1 + UnityEngine.Random.Range(-s.randomPitch / 2f, s.randomPitch / 2f)); // Randomise the original value of pitch for the sound
         s.source.Play(); // Play the Sound
+    }
+
+    private AudioClip GetRandomMusic()
+    {
+        return music[UnityEngine.Random.Range(0, music.Length)]; // return a random index value from the music array that hold all background music
+    }
+
+    private void Update()
+    {
+        if (!musicAudioSource.isPlaying) // check if music audio source is playing
+        {
+            musicAudioSource.clip = GetRandomMusic(); // Get Random Music clip
+            musicAudioSource.Play(); // Play random music clip
+        }
     }
 }
