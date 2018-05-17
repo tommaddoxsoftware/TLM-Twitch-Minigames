@@ -99,17 +99,6 @@ public class LevelController : MonoBehaviour
         // Play sound PlayerCompleteCourse1 when a player collides with the hole
         FindObjectOfType<AudioManager>().Play("PlayerCompletedCourse");
 
-        // Finds Objects with the tag "Player", stores them in an array activePlayersInScene
-        //GameObject[] activePlayersInScene = GameObject.FindGameObjectsWithTag("Player");
-        //if (activePlayersInScene.Length > 1) // if the amount of active players is more than 1
-        //{
-        //    FindObjectOfType<AudioManager>().Play("PlayerCompleteCourse1"); // play sound PlayerCompleteCourse1
-        //}
-        //else if (activePlayersInScene.Length <= 1) // if the amount of active players is less than or equal to 1
-        //{
-        //    FindObjectOfType<AudioManager>().Play("PlayerCompleteCourse3"); // play sound PlayerCompleteCourse3
-        //}
-
         //If the object isnt a ball do nothing
         if (ballIndex != -1)
         {

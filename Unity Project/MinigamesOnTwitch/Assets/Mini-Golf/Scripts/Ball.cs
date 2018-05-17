@@ -116,6 +116,9 @@ public class Ball : MonoBehaviour {
             bool foundLevel = false;
             GameObject parent = coll.transform.parent.gameObject;
 
+            //Play collision sound
+            FindObjectOfType<AudioManager>().Play("BallHitSomething");
+
             //Goes through all parents until the course is found or no more parents exist
             while (parent != null && !foundLevel)
             {
