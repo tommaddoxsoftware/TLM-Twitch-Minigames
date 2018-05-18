@@ -88,7 +88,14 @@ public class LevelController : MonoBehaviour
     {
         //Finds the index of the ball in the ball array
         int ballIndex = m_ballControl.FindBallIndex(ball);
-
+        //Save the score to player's score array, and reset
+        Ball player = ball.GetComponent<Ball>();
+        player.overallScore += player.strokeCount;
+        player.playerScore[m_level] = player.strokeCount;
+        player.strokeCount = 0;
+        Debug.Log("Player scored! It took them " + player.overallScore + " turns");
+        UiController uiControl = GameObject.Find("UiManager").GetComponent<UiController>();
+        uiControl.PopulateScoreboard();
 
         FinishBall(ballIndex);
     }
@@ -117,6 +124,8 @@ public class LevelController : MonoBehaviour
                     //Deactivates the level that was just done
                     m_starts[m_level].SetActive(false);
                     m_ends[m_level].SetActive(false);
+
+                   
 
                     //Increases the level
                     m_level++;

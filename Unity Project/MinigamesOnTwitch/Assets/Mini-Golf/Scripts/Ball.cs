@@ -25,7 +25,9 @@ public class Ball : MonoBehaviour {
 
     public string usrName;
     public Color playerColour;
-    private int strokeCount = 0;
+    public int strokeCount = 0;
+    public int overallScore = 0;
+    public int[] playerScore;
 
     [SerializeField]
     private LevelController m_lvlController;
@@ -46,8 +48,13 @@ public class Ball : MonoBehaviour {
 
     //Use this for initialization
     void Start() {
+        //9 hole course, make an array for 9 ints;
+        playerScore = new int[9];
+
+        //Get the rigidbody as a reference
         m_rigid = this.GetComponent<Rigidbody>();
 
+        //Get required gamebjects and scripts
         GameObject minigameManager = GameObject.Find("MinigameManager");
 
         m_lvlController = minigameManager.GetComponent<LevelController>();
@@ -240,6 +247,10 @@ public class Ball : MonoBehaviour {
             if (!m_inMotion && m_rigid.velocity == new Vector3(0,0,0))
 
             {
+                //Update scores
+                strokeCount++;
+                GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
+
                 m_rigid.drag = 0.8f;
                 //Store the transform (so we can access the position) before we fire the ball
                 m_lastPosition = gameObject.transform.position;
@@ -250,10 +261,6 @@ public class Ball : MonoBehaviour {
                 m_rigid.velocity = -dir * m_power; //Applys the velocity to the ball
 
                 Invoke("SetMovement", 3);
-
-                //Update scores
-                strokeCount++;
-                GameObject.Find("UiManager").GetComponent<UiController>().UpdateScore(scoreBoardStrokeUi.GetComponent<Text>(), strokeCount.ToString());
 
 
                 //Sends message to the bot

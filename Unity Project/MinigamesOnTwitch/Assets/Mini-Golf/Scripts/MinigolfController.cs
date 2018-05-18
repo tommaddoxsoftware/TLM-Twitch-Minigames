@@ -27,7 +27,7 @@ public class MinigolfController : MonoBehaviour
     private GameJoin m_playerList;
     private AdminControls m_adminControls;
 
-    private GameObject[] m_playerBalls;
+    public GameObject[] m_playerBalls;
 
     public int outOfBoundsTimeout = 3;
 
