@@ -53,30 +53,6 @@ public class MinigolfController : MonoBehaviour
 
         m_levelControl = this.GetComponent<LevelController>();
         m_levelControl.Init(m_playerList.playerCount);
-
-        for (int i = 0; i < m_playerList.MaxPlayers; i++)
-        {
-            //Creates and set ups all balls
-            m_playerBalls[i] = Instantiate(ballPrefab);
-            m_playerBalls[i].SetActive(false);
-
-            //Passes the bot to the balls
-            m_playerBalls[i].GetComponent<Ball>().Bot = m_twitchBot;
-
-            //Sets the maximum for the balls
-            m_playerBalls[i].GetComponent<Ball>().MaxPower = maxPower;
-            m_playerBalls[i].GetComponent<Ball>().MinPower = minPower;
-
-            for (int j = 0; j < m_playerBalls.Length; j++)
-            {
-                try
-                {
-                    //Prevents balls from colleding when instantiating
-                    Physics.IgnoreCollision(m_playerBalls[i].GetComponent<Collider>(), m_playerBalls[j].GetComponent<Collider>()); 
-                }
-                catch { }
-            }
-        }
     }
 
     void OnChatMsgRecieved(string msg)
@@ -162,6 +138,7 @@ public class MinigolfController : MonoBehaviour
 
     public void PlayerJoined(int index)
     {
+        InstantiateBall(index);
         CreateBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         ResetBall(index);
@@ -172,6 +149,8 @@ public class MinigolfController : MonoBehaviour
         RemoveBall(index);
         m_playerBalls[index].GetComponent<Ball>().StopBall();
         GameObject.Find("UiManager").GetComponent<UiController>().RemoveFromScoreboard(m_playerBalls[index]);
+
+        Destroy(m_playerBalls[index]);
     }
 
     public void MoveBalls()
@@ -190,6 +169,56 @@ public class MinigolfController : MonoBehaviour
 
             m_playerBalls[activePlayers[i]].GetComponent<Ball>().ResetBallAdjustments();
         }
+    }
+
+    private void InstantiateBall(int index)
+    {
+        //Creates and set ups all balls
+        m_playerBalls[index] = Instantiate(ballPrefab);
+        m_playerBalls[index].SetActive(false);
+
+        //Passes the bot to the balls
+        m_playerBalls[index].GetComponent<Ball>().Bot = m_twitchBot;
+
+        //Sets the maximum for the balls
+        m_playerBalls[index].GetComponent<Ball>().MaxPower = maxPower;
+        m_playerBalls[index].GetComponent<Ball>().MinPower = minPower;
+
+        for (int i = 0; i < m_playerBalls.Length; i++)
+        {
+            try
+            {
+                //Prevents balls from colleding when instantiating
+                Physics.IgnoreCollision(m_playerBalls[index].GetComponent<Collider>(), m_playerBalls[i].GetComponent<Collider>());
+            }
+            catch { }
+        }
+    }
+
+    public bool RecreateBalls()
+    {
+        //Temp storage for old balls
+        GameObject[] tempBalls = m_playerBalls;
+
+        int newMax = m_playerList.MaxPlayers;
+
+        //New ball array
+        m_playerBalls = new GameObject[newMax];
+
+        //Gets the activeplayers index
+        List<int> activePlayers = m_playerList.GetActivePlayers();
+
+        for (int i = 0; i < activePlayers.Count; i++)
+        {
+            //Recreates the balls
+            InstantiateBall(activePlayers[i]);
+            m_playerBalls[i] = tempBalls[i];
+
+            //Destroys the old ball
+            Destroy(tempBalls[activePlayers[i]]);
+        }
+
+        return true;
     }
 
     public GameObject[] Balls
