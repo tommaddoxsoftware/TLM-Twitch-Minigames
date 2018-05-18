@@ -39,6 +39,9 @@ public class UiController : MonoBehaviour {
     //Stores the total number of courses
     private int numCourses;
 
+    [SerializeField]
+    private Text courseNumberText;
+
     //Level Timer
     System.TimeSpan timer;
 
@@ -139,6 +142,10 @@ public class UiController : MonoBehaviour {
         FadeIn(1.0f, eventText);
     }
 
+    public void UpdateCourseNum(int courseNum)
+    {
+        courseNumberText.text = courseNum + " / 9";
+    }
     public Color ColorFromUsername(string username)
     {
         //Generate a colour from the username length

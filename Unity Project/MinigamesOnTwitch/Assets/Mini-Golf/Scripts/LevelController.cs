@@ -130,6 +130,9 @@ public class LevelController : MonoBehaviour
                     //Increases the level
                     m_level++;
 
+                    UiController uiControl = GameObject.Find("UiManager").GetComponent<UiController>();
+                    uiControl.UpdateCourseNum(m_level+1);
+
                     //Activates the next level
                     m_starts[m_level].SetActive(true);
                     m_ends[m_level].SetActive(true);
