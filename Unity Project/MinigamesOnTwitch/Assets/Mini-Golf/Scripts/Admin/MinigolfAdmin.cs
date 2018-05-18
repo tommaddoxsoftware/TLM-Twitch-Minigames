@@ -121,6 +121,39 @@ public class MinigolfAdmin : MonoBehaviour
                     m_irc.SendMsg(user + " invalid user");
                 }
                 break;
+            case "!!maxplayers":
+                try
+                {
+                    int newMax = int.Parse(msgArray[1]);
+
+                    //Hard Cap
+                    if (newMax > 0 && newMax < 100)
+                    {
+                        //Attempt to change the maximum number of players
+                        bool success = m_players.ChangeMaxPlayers(newMax);
+
+                        Debug.Log("success: " + success);
+
+                        if (success)
+                        {
+                            m_irc.SendMsg("Max players changed to: " + newMax);
+                        }
+                        else
+                        {
+                            m_irc.SendMsg("Unable to change max players: " + newMax);
+                        }
+                    }
+                    else
+                    {
+                        m_irc.SendMsg("Unable to change max players below 1");
+                    }
+                }
+                catch
+                {
+                    m_irc.SendMsg(user + " invalid value");
+                }
+
+                break;
         }
     }
 }
