@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -181,6 +181,81 @@ public class GameJoin : MonoBehaviour
         }
 
         return activePlayers;
+    }
+
+    public bool ChangeMaxPlayers(int newMax)
+    {
+        List<int> activePlayers = GetActivePlayers();
+
+        OrganisePlayers();
+
+        string[] tempPlayers = m_players;
+
+        //If the new list will be bigger
+        if (newMax > tempPlayers.Length)
+        {
+            //Create the new array
+            m_players = new string[newMax];
+
+            for (int i = 0; i < tempPlayers.Length; i++)
+            {
+                //Refill the new array
+                m_players[i] = tempPlayers[i];
+            }
+        }
+        //If the new list will be smaller
+        else if (newMax < tempPlayers.Length)
+        {
+            //If there isnt enough space for all current players
+            if (newMax < activePlayers.Count)
+            {
+                return false;
+            }
+            else
+            {
+                //Create the new array
+                m_players = new string[newMax];
+
+                //Refill the new array
+                for (int i = 0; i < newMax; i++)
+                {
+                    m_players[i] = tempPlayers[i];
+                }
+            }
+        }
+        else
+        {
+            //Sets the array back
+            m_players = tempPlayers;
+        }
+
+        return UpdateMinigames();
+    }
+
+    private void OrganisePlayers()
+    {
+        //Go throught the player array
+        for (int i = 0; i < m_players.Length - 1; i++)
+        {
+            //Check if the current space is empty
+            if (m_players[i] == null)
+            {
+                //Move the player down
+                m_players[i] = m_players[i + 1];
+                m_players[i + 1] = null;
+            }
+        }
+    }
+
+    private bool UpdateMinigames()
+    {
+        //Update the minigolf
+        if (GetComponent<MinigolfController>())
+        {
+            return this.GetComponent<MinigolfController>().RecreateBalls();
+        }
+
+        return false;
     }
 
     public int MaxPlayers
